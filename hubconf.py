@@ -73,8 +73,9 @@ class AnySat(nn.Module):
         
         # Initialize Hydra with relative config path
         with initialize(version_base=None, config_path=config_path):
-            # Register custom resolver for eval
-            OmegaConf.register_new_resolver("eval", eval)
+            # Safely register eval resolver if not already registered
+            if not OmegaConf.has_resolver("eval"):
+                OmegaConf.register_new_resolver("eval", eval)
             # Load the configuration
             cfg = compose(config_name=config_name)
             return cfg
