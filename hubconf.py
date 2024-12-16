@@ -92,7 +92,7 @@ class AnySat(nn.Module):
         model = cls(model_size=model_size, **kwargs)
         
         checkpoint_urls = {
-            'base': 'https://huggingface.co/gastruc/anysat/resolve/main/models/AnySat.pth',
+            'base': 'https://huggingface.co/g-astruc/AnySat/resolve/main/models/AnySat.pth',
             # 'small': 'https://huggingface.co/gastruc/anysat/resolve/main/anysat_small_geoplex.pth', COMING SOON
             # 'tiny': 'https://huggingface.co/gastruc/anysat/resolve/main/anysat_tiny_geoplex.pth' COMING SOON
         }
