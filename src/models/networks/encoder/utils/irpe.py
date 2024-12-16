@@ -1,13 +1,10 @@
 """The implementation of iRPE (image relative position encoding)."""
-from easydict import EasyDict as edict
 import math
-import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from timm.layers import trunc_normal_
+from models.networks.encoder.utils.utils import trunc_normal_
 try:
-    from rpe_ops.rpe_index import RPEIndexFunction
+    from models.networks.encoder.utils.rpe_ops.rpe_index import RPEIndexFunction
 except ImportError:
     RPEIndexFunction = None
     import warnings
@@ -574,8 +571,8 @@ class iRPE(nn.Module):
 
         rp_bucket, num_buckets = get_bucket_ids_2d(method=self.method,
                                                    height=height, width=width,
-                                                   skip=skip, alpha=config.alpha,
-                                                   beta=config.beta, gamma=config.gamma,
+                                                   skip=skip, alpha=config['alpha'],
+                                                   beta=config['beta'], gamma=config['gamma'],
                                                    dtype=dtype, device=device)
         rp_bucket = rp_bucket.unsqueeze(0).repeat(B, 1, 1)
         if pos is not None:
@@ -824,26 +821,26 @@ def get_single_rpe_config(ratio=1.9,
     config: RPEConfig
         The config of single relative position encoding.
     """
-    config = edict()
+    config = {}
     # whether to share encodings across different heads
-    config.shared_head = shared_head
+    config['shared_head'] = shared_head
     # mode: None, bias, contextual
-    config.mode = mode
+    config['mode'] = mode
     # method: None, Bias, Quant, Cross, Product
-    config.method = method
+    config['method'] = method
     # the coefficients of piecewise index function
-    config.alpha = 1 * ratio
-    config.beta = 2 * ratio
-    config.gamma = 8 * ratio
+    config['alpha'] = 1 * ratio
+    config['beta'] = 2 * ratio
+    config['gamma'] = 8 * ratio
 
     # set the number of buckets
-    config.num_buckets = get_num_buckets(method,
-                                         config.alpha,
-                                         config.beta,
-                                         config.gamma)
+    config['num_buckets'] = get_num_buckets(method,
+                                         config['alpha'],
+                                         config['beta'],
+                                         config['gamma'])
     # add extra bucket for `skip` token (e.g. class token)
     if skip > 0:
-        config.num_buckets += 1
+        config['num_buckets'] += 1
     return config
 
 
@@ -899,7 +896,7 @@ def get_rpe_config(ratio=1.9,
         method = method_mapping[method.lower()]
     if mode == 'ctx':
         mode = 'contextual'
-    config = edict()
+    config = {}
     # relative position encoding on queries, keys and values
     kwargs = dict(
         ratio=ratio,
@@ -908,9 +905,9 @@ def get_rpe_config(ratio=1.9,
         shared_head=shared_head,
         skip=skip,
     )
-    config.rpe_q = get_single_rpe_config(**kwargs) if 'q' in rpe_on else None
-    config.rpe_k = get_single_rpe_config(**kwargs) if 'k' in rpe_on else None
-    config.rpe_v = get_single_rpe_config(**kwargs) if 'v' in rpe_on else None
+    config['rpe_q'] = get_single_rpe_config(**kwargs) if 'q' in rpe_on else None
+    config['rpe_k'] = get_single_rpe_config(**kwargs) if 'k' in rpe_on else None
+    config['rpe_v'] = get_single_rpe_config(**kwargs) if 'v' in rpe_on else None
     return config
 
 
@@ -937,7 +934,7 @@ def build_rpe(config, head_dim, num_heads, n_modalities=1):
     """
     if config is None:
         return None, None, None
-    rpes = [config.rpe_q, config.rpe_k, config.rpe_v]
+    rpes = [config['rpe_q'], config['rpe_k'], config['rpe_v']]
     transposeds = [True, True, False]
 
     def _build_single_rpe(rpe, transposed):

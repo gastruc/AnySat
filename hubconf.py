@@ -22,7 +22,7 @@ sys.path.append(str(REPO_ROOT / "src"))
 if not (REPO_ROOT / "models").exists():
     os.symlink(REPO_ROOT / "src/models", REPO_ROOT / "models")
 
-dependencies = ['torch', 'torchvision', 'omegaconf', 'timm', 'easydict', 'omegaconf']
+dependencies = ['torch', 'omegaconf']
 
 # Load base configurations
 CONFIG_PATH = REPO_ROOT / "configs"

@@ -6,8 +6,6 @@ import torch
 import glob
 from datetime import datetime
 import rasterio
-import torchvision
-import torch.nn as nn
 import albumentations as A
 import cv2
 import json

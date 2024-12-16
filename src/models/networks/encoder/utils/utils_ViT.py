@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.jit import Final
 
-from timm.layers import Mlp, DropPath, use_fused_attn
+from models.networks.encoder.utils.utils import Mlp, DropPath
 
 class Attention(nn.Module):
     fused_attn: Final[bool]

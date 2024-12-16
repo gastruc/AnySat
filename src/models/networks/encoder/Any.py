@@ -3,7 +3,7 @@ from functools import partial
 
 import torch
 import torch.nn as nn
-from timm.layers import trunc_normal_, PatchDropout
+from models.networks.encoder.utils.utils import trunc_normal_, PatchDropout
 
 from models.networks.encoder.utils.utils_ViT import CrossRPEBlock, Block
 from models.networks.encoder.utils.pos_embed import get_2d_sincos_pos_embed_with_scale
