@@ -44,14 +44,20 @@ class AnySat(nn.Module):
         self.config.model.flash_attn = flash_attn
         
         # Override any additional parameters
+        device = None
         for k, v in kwargs.items():
-            OmegaConf.update(self.config, k, v)
+            if k == "device":
+                device = v
+            else:
+                OmegaConf.update(self.config, k, v)
         
         # Use Hydra's instantiate instead of manual instantiation
         with warnings.catch_warnings():
             # Ignore all warnings during model initialization
             warnings.filterwarnings('ignore')
             self.model = instantiate(self.config.model)
+            if device is not None:
+                self.model = self.model.to(device)
     
     @staticmethod
     def _load_config(model_size):
