@@ -1,0 +1,34 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Pastis
+  - override /model/network/encoder: Any_Base
+  - override /model: SemSeg
+  - override /model/network/mlp: mlpDenseSemSeg
+
+dataset:
+  classif: False
+
+model:
+  name: "Any_MM"
+  optimizer:
+    lr: 2e-4
+  network:
+    encoder:
+      scale: 4
+      keep_subpatch: True
+      modality_keep: "s2"
+    mlp:
+      instance:
+        initial_dim: ${model.network.encoder.embed_dim}
+
+callbacks:
+  early_stopping:
+    monitor: "val/mIoU"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "spot"
+  - "s2"
+  - "s1"

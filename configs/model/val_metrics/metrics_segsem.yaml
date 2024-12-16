@@ -1,0 +1,3 @@
+_target_: src.models.metrics.metrics.IoU
+num_classes: ${dataset.num_classes}
+ignore_index: -1

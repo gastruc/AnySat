@@ -1,0 +1,38 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Planted
+  - override /model: Classif
+  - override /model/network/encoder: Any_Base
+  - override /model/loss: CrossEntropy
+
+model:
+  name: "Any_MM"
+  train_metrics:
+    multilabel: False
+  val_metrics:
+    multilabel: False
+  test_metrics:
+    multilabel: False
+  optimizer:
+    lr: 5e-5
+  network:
+    instance:
+      omni: True
+    mlp:
+      instance:
+        initial_dim: ${model.network.encoder.embed_dim}
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "s2"
+  - "s1"
+  - "l7"
+  - "alos"
+  - "modis"
+

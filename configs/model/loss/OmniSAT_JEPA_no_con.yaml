@@ -1,0 +1,5 @@
+_target_: models.losses.Losses
+mix: {
+  mse : 1.0,
+}
+modalities: ${modalities}

@@ -1,0 +1,60 @@
+defaults:
+  - train_transform: FLAIR
+  - test_transform: FLAIR
+  - _self_
+
+name: FLAIR
+global_batch_size: 2048
+num_classes: 13
+height: 10
+width: 10
+num_patches: 100
+sat_patch_size: 40
+len: 49230
+crop_s2: True
+classif: True
+norm_path: ${data_dir}
+temporal_dropout: 0.7
+
+train_dataset:
+  _partial_: true
+  _target_: data.FLAIR.FLAIR
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  num_classes: ${dataset.num_classes}
+  crop_s2: ${dataset.crop_s2}
+  partition: ${partition}
+  modalities: ${modalities}
+  sat_patch_size: ${dataset.sat_patch_size}
+  classif: ${dataset.classif}
+  norm_path: ${dataset.norm_path}
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.FLAIR.FLAIR
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  num_classes: ${dataset.num_classes}
+  crop_s2: ${dataset.crop_s2}
+  partition: 1.0
+  modalities: ${modalities}
+  sat_patch_size: ${dataset.sat_patch_size}
+  classif: ${dataset.classif}
+  norm_path: ${dataset.norm_path}
+
+test_dataset:
+  _partial_: true
+  _target_: data.FLAIR.FLAIR
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  num_classes: ${dataset.num_classes}
+  crop_s2: ${dataset.crop_s2}
+  partition: 1.0
+  modalities: ${modalities}
+  sat_patch_size: ${dataset.sat_patch_size}
+  classif: ${dataset.classif}
+  norm_path: ${dataset.norm_path}

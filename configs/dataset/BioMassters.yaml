@@ -1,0 +1,50 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: BioMassters
+global_batch_size: 128
+num_classes: 1
+height: 256
+width: 256
+num_patches: 65536
+norm_path: ${data_dir}
+temporal_dropout: 0.5
+
+train_dataset:
+  _partial_: true
+  _target_: data.biomassters.BioMassters
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  partition: ${partition}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  ignore_index: -1
+  num_classes: ${dataset.num_classes}
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.biomassters.BioMassters
+  path: ${data_dir}
+  split: val
+  transform: ${dataset.test_transform}
+  partition: ${partition}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  ignore_index: -1
+  num_classes: ${dataset.num_classes}
+
+test_dataset:
+  _partial_: true
+  _target_: data.biomassters.BioMassters
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  partition: 1.0
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  ignore_index: -1
+  num_classes: ${dataset.num_classes}

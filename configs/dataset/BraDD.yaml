@@ -1,0 +1,41 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: BraDD
+global_batch_size: 2048
+num_classes: 2
+height: 48
+width: 48
+num_patches: 2304
+norm_path: ${data_dir}
+temporal_dropout: 0.5
+
+train_dataset:
+  _partial_: true
+  _target_: data.BraDD.BraDD
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.train_transform}
+  norm_path: ${dataset.norm_path}
+  split: train
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.BraDD.BraDD
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  norm_path: ${dataset.norm_path}
+  split: val
+
+test_dataset:
+  _partial_: true
+  _target_: data.BraDD.BraDD
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  norm_path: ${dataset.norm_path}
+  split: test

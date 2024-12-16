@@ -1,0 +1,3 @@
+_target_: src.models.metrics.metrics.SegPangaea
+num_classes: ${dataset.num_classes}
+ignore_index: -1

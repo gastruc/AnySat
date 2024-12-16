@@ -1,0 +1,6 @@
+_target_: src.models.metrics.metrics.MetricsSemSegJ
+modalities: ${modalities}
+num_classes: ${dataset.num_classes}
+save_results: True
+get_classes: False
+save_dir: ${paths.output_dir}/images/

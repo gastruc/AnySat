@@ -1,0 +1,4 @@
+_target_: data.transforms.transform.Transform
+size: 500
+classif: ${dataset.classif}
+center_crop: True

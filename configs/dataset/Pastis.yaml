@@ -1,0 +1,56 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: PASTIS-R
+global_batch_size: 2048
+num_classes: 20
+nb_split: 1
+height: 128
+width: 128
+num_patches: 16384
+classif: True
+len: 1455
+norm_path: ${data_dir}
+temporal_dropout: 20
+
+train_dataset:
+  _partial_: true
+  _target_: data.Pastis.PASTIS
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.train_transform}
+  reference_date: "2018-09-01"
+  folds: [1, 2, 3]
+  nb_split: ${dataset.nb_split}
+  classif: ${dataset.classif}
+  norm_path: ${dataset.norm_path}
+  split: train
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.Pastis.PASTIS
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  reference_date: "2018-09-01"
+  folds: [4]
+  nb_split: ${dataset.nb_split}
+  classif: ${dataset.classif}
+  norm_path: ${dataset.norm_path}
+  split: val
+
+test_dataset:
+  _partial_: true
+  _target_: data.Pastis.PASTIS
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  reference_date: "2018-09-01"
+  folds: [5]
+  nb_split: ${dataset.nb_split}
+  classif: ${dataset.classif}
+  norm_path: ${dataset.norm_path}
+  split: test

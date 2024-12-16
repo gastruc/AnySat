@@ -1,0 +1,44 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: Sickle
+global_batch_size: 2048
+num_classes: 2
+height: 32
+width: 32
+num_patches: 1024
+norm_path: ${data_dir}
+temporal_dropout: 0.2
+
+train_dataset:
+  _partial_: true
+  _target_: data.Sickle.Sickle
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.train_transform}
+  norm_path: ${dataset.norm_path}
+  img_size: ${dataset.height}
+  split: train
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.Sickle.Sickle
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  norm_path: ${dataset.norm_path}
+  split: val
+  img_size: ${dataset.height}
+
+test_dataset:
+  _partial_: true
+  _target_: data.Sickle.Sickle
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  norm_path: ${dataset.norm_path}
+  split: val
+  img_size: ${dataset.height}

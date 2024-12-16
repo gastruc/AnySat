@@ -1,0 +1,2 @@
+_target_: torch.nn.GroupNorm
+_partial_: true

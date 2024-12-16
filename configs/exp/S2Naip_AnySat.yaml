@@ -1,0 +1,22 @@
+# @package _global_
+
+defaults:
+  - override /dataset: S2Naip
+  - override /model: JEPA
+  - override /model/network: JEPAOmni
+  - override /model/network/encoder: Any
+  - override /model/train_metrics: no_metrics
+  - override /model/val_metrics: metrics_contrastif
+  - override /model/test_metrics: metrics_contrastif
+  - override /model/loss: OmniSAT_JEPA
+
+model:
+  name: "AnySat"
+  optimizer:
+    lr: 1e-4
+
+modalities:
+  - "naip"
+  - "l8"
+  - "s2"
+  - "s1"

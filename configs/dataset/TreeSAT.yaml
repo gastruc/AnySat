@@ -1,0 +1,68 @@
+defaults:
+  - train_transform: TreeSAT
+  - test_transform: TreeSAT
+  - _self_
+
+name: TreeSat
+global_batch_size: 2048
+num_classes: 15
+height: 6
+width: 6
+num_patches: 36
+len: 38520
+mono_strict: False
+norm_path: ${data_dir} #null
+temporal_dropout: 0.0
+
+train_dataset:
+  _partial_: true
+  _target_: data.TreeSAT.TreeSAT
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  classes: ${dataset.classes}
+  partition: ${partition}
+  modalities: ${modalities}
+  mono_strict: ${dataset.mono_strict}
+  norm_path: ${dataset.norm_path}
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.TreeSAT.TreeSAT
+  path: ${data_dir}
+  split: val
+  transform: ${dataset.test_transform}
+  classes: ${dataset.classes}
+  partition: 1.0
+  modalities: ${modalities}
+  mono_strict: ${dataset.mono_strict}
+  norm_path: ${dataset.norm_path}
+
+test_dataset:
+  _partial_: true
+  _target_: data.TreeSAT.TreeSAT
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  classes: ${dataset.classes}
+  partition: 1.0
+  modalities: ${modalities}
+  mono_strict: ${dataset.mono_strict}
+  norm_path: ${dataset.norm_path}
+
+classes: ["Abies",
+            "Acer",
+            "Alnus",
+            "Betula",
+            "Cleared",
+            "Fagus",
+            "Fraxinus",
+            "Larix",
+            "Picea",
+            "Pinus",
+            "Populus",
+            "Prunus",
+            "Pseudotsuga",
+            "Quercus",
+            "Tilia"]

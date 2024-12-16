@@ -1,0 +1,83 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: MultiPastis
+num_classes: 20
+global_batch_size: 
+  tsaits: 128
+  pastishd: 1
+  flair: 64
+shapes:
+  tsaits: 6
+  pastishd: 128
+  flair: 10
+num_patches:
+  tsaits: 36
+  pastishd: 16384
+  flair: 100
+
+iter: ${eval:'1455 // (${dataset.global_batch_size.pastishd} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+
+train_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    pastishd: 
+      _target_: data.Pastis.PASTIS
+      path: ${paths.data_dir}/PASTIS-R/
+      modalities: ${modalities_dict.pastishd}
+      transform: ${dataset.train_transform}
+      reference_date: "2018-09-01"
+      folds: [1,2,3]
+      nb_split: 1
+      classif: ${dataset.pastishd.classif}
+      norm_path: ${paths.data_dir}/PASTIS-R/
+      split: train
+      temporal_dropout: ${dataset.pastishd.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    pastishd: 
+      _target_: data.Pastis.PASTIS
+      path: ${paths.data_dir}/PASTIS-R/
+      modalities: ${modalities_dict.pastishd}
+      transform: ${dataset.train_transform}
+      reference_date: "2018-09-01"
+      folds: [4]
+      nb_split: 1
+      classif: ${dataset.pastishd.classif}
+      norm_path: ${paths.data_dir}/PASTIS-R/
+      split: val
+
+test_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    pastishd: 
+      _target_: data.Pastis.PASTIS
+      path: ${paths.data_dir}/PASTIS-R/
+      modalities: ${modalities_dict.pastishd}
+      transform: ${dataset.train_transform}
+      reference_date: "2018-09-01"
+      folds: [5]
+      nb_split: 1
+      classif: ${dataset.pastishd.classif}
+      norm_path: ${paths.data_dir}/PASTIS-R/
+      split: test
+
+scales:
+  pastishd:
+    - 4
+    - 8
+    - 16
+
+pastishd:
+  classif: True
+  temporal_dropout: 40

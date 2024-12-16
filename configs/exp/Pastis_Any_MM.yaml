@@ -1,0 +1,33 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Pastis
+  - override /model/network/encoder: Any
+
+dataset:
+  classif: True
+  num_classes: 18
+
+model:
+  name: "Any_MM"
+  optimizer:
+    lr: 2e-4
+  network:
+    instance:
+      omni: True
+    encoder:
+      scale: 4
+    mlp:
+      instance:
+        initial_dim: ${model.network.encoder.embed_dim}
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "spot"
+  - "s2"
+  - "s1"

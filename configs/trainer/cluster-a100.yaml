@@ -1,0 +1,13 @@
+defaults:
+  - default.yaml
+
+trainer.devices: ${trainer.devices}
+trainer.progress_bar_refresh_rate: 2
+trainer.sync_batchnorm: True
+trainer.accelerator: gpu
+trainer.precision: 32
+trainer.strategy: ddp
+trainer.num_nodes: 1
+
+devices: 8
+num_workers: 8

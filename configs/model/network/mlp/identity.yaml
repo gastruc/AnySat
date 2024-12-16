@@ -1,0 +1,2 @@
+instance:
+  _target_: models.networks.mlp.Identity

@@ -1,0 +1,37 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Planted
+  - override /model: Classif
+  - override /model/network: Fine_tuning
+  - override /model/network/encoder: Any_Base
+  - override /model/loss: CrossEntropy
+
+model:
+  name: "AnySat_FineTuning_MM"
+  train_metrics:
+    multilabel: False
+  val_metrics:
+    multilabel: False
+  test_metrics:
+    multilabel: False
+  optimizer:
+    lr: 5e-5
+  network:
+    instance:
+      name: "target_encoder"
+      path: ${paths.log_dir}/Planted_OmniSAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "s2"
+  - "s1"
+  - "l7"
+  - "alos"
+  - "modis"
+

@@ -1,0 +1,25 @@
+# @package _global_
+
+defaults:
+  - override /model/network: Fine_tuning
+  - override /model/network/encoder: Any_Base
+
+model:
+  name: "AnySat_FineTuning_MM"
+  optimizer:
+    lr: 5e-5
+  network:
+    instance:
+      name: 'target_encoder'
+      path: ${paths.log_dir}/TreeSat_OmniSAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "aerial"
+  - "s2"
+  - "s1-asc"    

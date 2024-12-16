@@ -1,0 +1,37 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - dataset: TreeSAT.yaml
+  - model: Classif.yaml
+  - callbacks: default.yaml
+  - logger: wandb.yaml
+  - trainer: gpu.yaml
+  - paths: default.yaml
+  - extras: default.yaml
+  - hydra: default.yaml
+  - hparams_search: null # config for hyperparameter optimization
+  - optional local: default.yaml # optional local config for machine/user specific settings
+  - debug: null # debugging config (enable through command line, e.g. `python train.py debug=default)
+  - exp: null
+
+datamodule:
+  _target_: data.datamodule.DataModule
+  train_dataset: ${dataset.train_dataset}
+  val_dataset: ${dataset.val_dataset}
+  test_dataset: ${dataset.test_dataset}
+  global_batch_size: ${dataset.global_batch_size}
+  num_workers: ${trainer.num_workers}
+  num_nodes: ${trainer.trainer.num_nodes}
+  num_devices: ${trainer.devices}
+
+tags: ["eval"]
+data_dir: ${paths.data_dir}/${dataset.name}/
+compile: True # compile model for faster training with pytorch 2.0
+ckpt_path: ""
+seed: 32 # seed for random number generators in pytorch, numpy and python.random
+partition: 1.
+max_epochs: 500
+offline: False
+modalities: []
+experiment_name: ${dataset.name}_${model.name}

@@ -1,0 +1,84 @@
+defaults:
+  - mlp: mlp
+
+instance:
+  _target_: models.networks.Late_fusion.Late_fusion
+  modalities: ${modalities}
+  mlp: ${model.network.mlp}
+  encoder:
+    s2:
+      _target_: models.networks.encoder.PseTae.PseTae
+      modalities: ["s2"]
+      mlp1:
+        - 32
+        - 64
+      pooling: 'mean_std'
+      mlp2:
+        - 128
+      with_extra: False
+      extra_size: 0
+      n_head: 4
+      d_k: 32
+      mlp3: 
+        - 256
+      output_dim: 128
+      dropout: 0.2
+      len_max_seq: 258
+      T: 367
+    s1:
+      _target_: models.networks.encoder.PseTae.PseTae
+      modalities: ["s1"]
+      mlp1:
+        - 32
+        - 64
+      pooling: 'mean_std'
+      mlp2:
+        - 128
+      with_extra: False
+      extra_size: 0
+      n_head: 4
+      d_k: 32
+      mlp3: 
+        - 256
+      output_dim: 128
+      dropout: 0.2
+      len_max_seq: 258
+      T: 367
+    l7:
+      _target_: models.networks.encoder.PseTae.PseTae
+      modalities: ["l7"]
+      mlp1:
+        - 32
+        - 64
+      pooling: 'mean_std'
+      mlp2:
+        - 128
+      with_extra: False
+      extra_size: 0
+      n_head: 4
+      d_k: 32
+      mlp3: 
+        - 256
+      output_dim: 128
+      dropout: 0.2
+      len_max_seq: 258
+      T: 367
+    alos:
+      _target_: models.networks.encoder.PseTae.PseTae
+      modalities: ["alos"]
+      mlp1:
+        - 32
+        - 64
+      pooling: 'mean_std'
+      mlp2:
+        - 128
+      with_extra: False
+      extra_size: 0
+      n_head: 4
+      d_k: 32
+      mlp3: 
+        - 256
+      output_dim: 128
+      dropout: 0.2
+      len_max_seq: 258
+      T: 367

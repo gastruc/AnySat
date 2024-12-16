@@ -1,0 +1,34 @@
+# @package _global_
+
+defaults:
+  - override /dataset: FLAIR
+  - override /dataset/test_transform: Identity
+  - override /model/network/encoder: Any_Base
+  - override /model: SemSeg
+  - override /model/network: Fine_tuning_SemSeg_FLAIR
+
+dataset:
+  classif: False
+
+model:
+  name: "AnySat_FineTuning_MM"
+  optimizer:
+    lr: 5e-5
+  network:
+    encoder:
+      scale: 1
+      keep_subpatch: True
+      modality_keep: "aerial-flair"
+    instance:
+      name: "target_encoder"
+      path: ${paths.log_dir}/FLAIR_AnySAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/mIoU"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "aerial-flair"
+  - "s2"

@@ -1,0 +1,25 @@
+# @package _global_
+
+defaults:
+  - override /dataset: GeoPlex
+  - override /model: JEPA_multi
+  - override /model/network: JEPAOmni_multi
+  - override /model/network/encoder: Any_multi
+  - override /model/loss: OmniSAT_JEPA
+
+datamodule:
+  _target_: data.datamodule.DataModuleMulti
+model:
+  name: "AnySat"
+  optimizer:
+    lr: 1e-4
+
+modalities_dict:
+  tsaits:
+    - "aerial"
+    - "s2"
+    - "s1-asc"
+  pastishd:
+    - "spot"
+    - "s2"
+    - "s1"

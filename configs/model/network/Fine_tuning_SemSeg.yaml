@@ -1,0 +1,18 @@
+defaults:
+  - encoder: Any
+
+instance:
+  _target_: models.networks.Fine_tuning.Fine
+  encoder: ${model.network.encoder}
+  path: ''
+  output_size: ${model.network.encoder.embed_dim}
+  inter_dim: []
+  p_drop: 0.2
+  freeze: False
+  n_class: ${dataset.num_classes}
+  modalities: ${modalities}
+  last_block: False
+  pooling_method: null
+  proj_only: False
+  name: 'encoder'
+  patch_size: ${model.network.encoder.scale}

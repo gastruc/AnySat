@@ -1,0 +1,18 @@
+_target_: models.networks.encoder.PseTae.PseTae
+modalities: ${modalities}
+mlp1:
+  - 32
+  - 64
+pooling: 'mean_std'
+mlp2:
+  - 128
+with_extra: False
+extra_size: 0
+n_head: 4
+d_k: 32
+mlp3: 
+  - 256
+output_dim: 128
+dropout: 0.2
+len_max_seq: 258
+T: 367

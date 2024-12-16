@@ -1,0 +1,2 @@
+_target_: src.models.metrics.metrics.MetricsContrastifMulti
+modalities: ${modalities_dict}

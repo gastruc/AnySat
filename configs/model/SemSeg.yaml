@@ -1,0 +1,32 @@
+defaults:
+  - network: SemSeg
+  - loss: CrossEntropyWeighted
+  - train_metrics: metrics_segsem
+  - val_metrics: metrics_segsem
+  - test_metrics: metrics_segsem
+  - _self_
+
+name: SemSeg
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: true
+  mode: min
+  factor: 0.1
+  patience: 10
+
+instance:
+  _target_: src.models.module.Module
+  optimizer: ${model.optimizer}
+  scheduler: ${model.scheduler}
+  network: ${model.network}
+  loss: ${model.loss}
+  train_metrics: ${model.train_metrics}
+  val_metrics: ${model.val_metrics}
+  test_metrics: ${model.test_metrics}

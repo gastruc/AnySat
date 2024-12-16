@@ -1,0 +1,49 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: S2NAIP-urban
+global_batch_size: 128
+num_classes: 6
+height: 64
+width: 64
+num_patches: 4096
+iter: ${eval:'${dataset.true_len} // (${dataset.reduce_factor} * ${dataset.global_batch_size})'}
+iter_val: ${eval:'${dataset.true_len_val} // (${dataset.reduce_factor} * ${dataset.global_batch_size})'}
+true_len: 359046
+true_len_val: 82140
+reduce_factor: 20
+norm_path: ${data_dir}
+temporal_dropout: 0.5
+
+train_dataset:
+  _partial_: true
+  _target_: data.S2Naip.S2NAIP
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  partition: ${partition}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.S2Naip.S2NAIP
+  path: ${data_dir}
+  split: val
+  transform: ${dataset.test_transform}
+  partition: 1.0
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+test_dataset:
+  _partial_: true
+  _target_: data.S2Naip.S2NAIP
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  partition: 1.0
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}

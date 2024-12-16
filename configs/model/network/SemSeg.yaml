@@ -1,0 +1,10 @@
+defaults:
+  - encoder: PseTae
+  - mlp: mlpSemSeg
+
+instance:
+  _target_: models.networks.MonoModal.MonoModal
+  encoder: ${model.network.encoder}
+  mlp: ${model.network.mlp}
+  modalities: ${modalities}
+  omni: False

@@ -1,0 +1,2 @@
+_target_: torch.nn.InstanceNorm1d
+_partial_: true

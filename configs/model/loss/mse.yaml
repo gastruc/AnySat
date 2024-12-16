@@ -1,0 +1,4 @@
+_target_: models.losses.Losses
+mix: {
+  mse-semseg : 1.0,
+}

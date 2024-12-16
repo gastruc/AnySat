@@ -1,0 +1,41 @@
+defaults:
+  - network: Monomodal
+  - loss: bce
+  - train_metrics: metrics_mono
+  - val_metrics: metrics_mono
+  - test_metrics: metrics_mono
+  - _self_
+
+name: PseTae
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.05
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: true
+  mode: min
+  factor: 0.1
+  patience: 10
+
+instance:
+  _target_: src.models.module_JEPA.Module
+  optimizer: ${model.optimizer}
+  scheduler: ${model.scheduler}
+  network: ${model.network}
+  loss: ${model.loss}
+  train_metrics: ${model.train_metrics}
+  val_metrics: ${model.val_metrics}
+  test_metrics: ${model.test_metrics}
+  ema:
+    - 0.996
+    - 1.0
+  ipe_scale: 1.0
+  len_data: ${dataset.len}
+  batch_size: ${dataset.global_batch_size}
+  num_epochs: ${max_epochs}
+  scale: ${model.network.encoder.scale}
+  shape: ${dataset.height}

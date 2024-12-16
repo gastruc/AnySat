@@ -1,0 +1,225 @@
+_target_: models.networks.encoder.Any_multi.AnyModule
+modalities:
+  all:
+    - "aerial"
+    - "aerial-flair"
+    - "spot"
+    - "naip"
+    - "s2"
+    - "s1-asc"
+    - "s1"
+    - "alos"
+    - "l7"
+    - "l8"
+    - "modis"
+projectors:
+  aerial:
+    _target_: models.networks.encoder.utils.patch_embeddings.PatchMLPMulti
+    patch_size: 10
+    in_chans: 4
+    embed_dim: ${model.embed_dim}
+    bias: ${model.pre_norm}
+    mlp: 
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+  aerial-flair:
+    _target_: models.networks.encoder.utils.patch_embeddings.PatchMLPMulti
+    patch_size: 10
+    in_chans: 5
+    embed_dim: ${model.embed_dim}
+    bias: ${model.pre_norm}
+    mlp: 
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+  spot:
+    _target_: models.networks.encoder.utils.patch_embeddings.PatchMLPMulti
+    patch_size: 10
+    in_chans: 3
+    resolution: 1.0
+    embed_dim: ${model.embed_dim}
+    bias: ${model.pre_norm}
+    mlp:
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+  naip:
+    _target_: models.networks.encoder.utils.patch_embeddings.PatchMLPMulti
+    patch_size: 8
+    in_chans: 4
+    resolution: 1.25
+    embed_dim: ${model.embed_dim}
+    bias: ${model.pre_norm}
+    mlp: 
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+  s2:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 10
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.0
+    T: 367
+    in_norm: True
+    return_att: False
+    positional_encoding: True
+  s1-asc:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 2
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.2
+    T: 367
+    in_norm: False
+    return_att: False
+    positional_encoding: True
+  s1:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 3
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.2
+    T: 367
+    in_norm: False
+    return_att: False
+    positional_encoding: True
+  alos:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 3
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.2
+    T: 367
+    in_norm: False
+    return_att: False
+    positional_encoding: True
+    reduce_scale: 3 
+  l7:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 6
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.2
+    T: 367
+    in_norm: False
+    return_att: False
+    positional_encoding: True
+    reduce_scale: 3
+  l8:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 11
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.
+    T: 366
+    in_norm: False
+    return_att: False
+    positional_encoding: True
+  modis:
+    _target_: models.networks.encoder.utils.ltae.PatchLTAEMulti
+    in_channels: 7
+    n_head: 16
+    d_k: 8
+    mlp:
+      - ${model.embed_dim}
+    mlp_in:
+      - ${eval:'${model.embed_dim} // 8'}
+      - ${eval:'${model.embed_dim} // 2'}
+      - ${model.embed_dim}
+      - ${eval:'${model.embed_dim} * 2'}
+      - ${model.embed_dim}
+    dropout: 0.2
+    T: 367
+    in_norm: False
+    return_att: False
+    positional_encoding: True
+    reduce_scale: 12
+
+spatial_encoder:
+  _target_: models.networks.encoder.Transformer.TransformerMulti
+  embed_dim: ${model.embed_dim}
+  depth: ${model.depth}
+  num_heads: ${model.num_heads}
+  mlp_ratio: 4.0
+  attn_drop_rate: 0.0
+  drop_path_rate: 0.0
+  modalities: ${model.modalities}
+  scales: {}
+  input_res:
+    aerial: ${eval:'${model.projectors.aerial.patch_size} * 0.2'}
+    aerial-flair: ${eval:'${model.projectors.aerial-flair.patch_size} * 0.2'}
+    spot: ${eval:'${model.projectors.spot.patch_size} * 1'}
+    naip: ${eval:'${model.projectors.naip.patch_size} * 1.25'}
+    s2: 10
+    s1-asc: 10
+    s1-des: 10
+    s1: 10
+    l8: 10
+    l7: 30
+    alos: 30
+    modis: 250
+
+num_patches: {}
+embed_dim: 768
+depth: 6
+num_heads: 12
+mlp_ratio: 4.
+class_token: True
+pre_norm: False
+drop_rate: 0.0
+patch_drop_rate: 0.0
+drop_path_rate: 0.0
+attn_drop_rate: 0.0
+scales: {}
+flash_attn: True
+release: True

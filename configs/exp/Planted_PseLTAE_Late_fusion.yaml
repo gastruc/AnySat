@@ -1,0 +1,27 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Planted
+  - override /model/network: Late_fusion_PseTAE_Planted
+  - override /model/loss: CrossEntropy
+
+model:
+  name: "PseLTAE_Late_fusion"
+  optimizer:
+    lr: 2e-4
+  network:
+    mlp:
+      instance:
+        initial_dim: 512
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "s2"
+  - "s1"
+  - "l7"
+  - "alos"

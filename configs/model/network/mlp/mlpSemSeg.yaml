@@ -1,0 +1,12 @@
+defaults:
+  - activation: gelu
+  - norm: batchnorm 
+
+instance:
+  _target_: models.networks.mlp.MLPSemSeg
+  initial_dim: ${model.network.encoder.output_dim}
+  hidden_dim: []
+  final_dim: ${dataset.num_classes}
+  norm: ${model.network.mlp.norm}
+  activation: ${model.network.mlp.activation}
+  patch_size: ${model.network.encoder.scale}

@@ -1,0 +1,27 @@
+# @package _global_
+
+defaults:
+  - override /model/network/encoder: Any_Base
+
+model:
+  name: "Any_MM"
+  optimizer:
+    lr: 5e-5
+  network:
+    instance:
+      omni: True
+    mlp:
+      instance:
+        initial_dim: ${model.network.encoder.embed_dim}
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "aerial"
+  - "s2"
+  - "s1-asc"
+

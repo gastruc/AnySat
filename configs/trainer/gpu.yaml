@@ -1,0 +1,9 @@
+defaults:
+  - default.yaml
+
+trainer:
+  accelerator: gpu
+  devices: ${trainer.devices}
+  sync_batchnorm: True
+
+devices: 3

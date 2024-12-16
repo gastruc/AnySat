@@ -1,0 +1,5 @@
+_target_: src.models.metrics.metrics.IoU
+num_classes: ${dataset.num_classes}
+ignore_index: -1
+visu: True
+save_dir: ${paths.output_dir}/images/

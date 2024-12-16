@@ -1,0 +1,31 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Pastis
+  - override /model/network: Fine_tuning
+  - override /model/network/encoder: Any_Base
+
+dataset:
+  num_classes: 18
+
+model:
+  name: "AnySat_FineTuning_MM"
+  optimizer:
+    lr: 5e-5
+  network:
+    encoder:
+      scale: 4 
+    instance:
+      name: "target_encoder"
+      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/F1_Score_macro"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "spot"
+  - "s2"
+  - "s1"

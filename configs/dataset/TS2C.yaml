@@ -1,0 +1,44 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: TimeSen2Crop
+global_batch_size: 2048
+num_classes: 16
+height: 1
+width: 1
+num_patches: 1
+norm_path: ${data_dir}
+temporal_dropout: 0.2
+
+train_dataset:
+  _partial_: true
+  _target_: data.TimeSen2Crop.TS2CDataset
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.train_transform}
+  split: train
+  temporal_dropout: ${dataset.temporal_dropout}
+  norm_path: ${dataset.norm_path}
+  num_classes: ${dataset.num_classes}
+
+val_dataset:
+  _partial_: true
+  _target_: data.TimeSen2Crop.TS2CDataset
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  split: val
+  num_classes: ${dataset.num_classes}
+  norm_path: ${dataset.norm_path}
+
+test_dataset:
+  _partial_: true
+  _target_: data.TimeSen2Crop.TS2CDataset
+  path: ${data_dir}
+  modalities: ${modalities}
+  transform: ${dataset.test_transform}
+  split: test
+  num_classes: ${dataset.num_classes}
+  norm_path: ${dataset.norm_path}

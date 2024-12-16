@@ -1,0 +1,5 @@
+_target_: data.transforms.transform.GeoPlexTransform
+sizes: 
+  tsaits: 300
+  flair: 500
+modalities: ${modalities_dict}

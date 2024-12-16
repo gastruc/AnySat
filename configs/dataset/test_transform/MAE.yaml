@@ -1,0 +1,4 @@
+_target_: data.transforms.transform.TransformMAE
+p: 0.0
+size: 224
+s2_size: 0

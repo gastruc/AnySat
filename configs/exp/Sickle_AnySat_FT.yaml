@@ -1,0 +1,38 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Sickle
+  - override /model/network/encoder: Any_Base
+  - override /model: SemSeg
+  - override /model/network: Fine_tuning_SemSeg
+  - override /model/loss: CrossEntropyIgnore
+  - override /model/train_metrics: metrics_segsemJ
+  - override /model/val_metrics: metrics_segsemJ
+  - override /model/test_metrics: metrics_segsemJ
+
+dataset:
+  classif: False
+
+model:
+  name: "AnySat_FineTuning_MM_SemSeg"
+  optimizer:
+    lr: 5e-5
+  network:
+    encoder:
+      scale: 1
+      keep_subpatch: True
+      modality_keep: "s2"
+    instance:
+      name: "target_encoder"
+      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/IoU"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "l8"
+  - "s2"
+  - "s1"

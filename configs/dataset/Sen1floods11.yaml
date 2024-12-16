@@ -1,0 +1,48 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: sen1floods11
+global_batch_size: 128
+num_classes: 2
+height: 512
+width: 512
+num_patches: 262144
+norm_path: ${data_dir}
+
+train_dataset:
+  _partial_: true
+  _target_: data.Sen1floods11.Sen1Floods11
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  partition: ${partition}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  ignore_index: -1
+  num_classes: ${dataset.num_classes}
+
+val_dataset:
+  _partial_: true
+  _target_: data.Sen1floods11.Sen1Floods11
+  path: ${data_dir}
+  split: val
+  transform: ${dataset.test_transform}
+  partition: ${partition}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  ignore_index: -1
+  num_classes: ${dataset.num_classes}
+
+test_dataset:
+  _partial_: true
+  _target_: data.Sen1floods11.Sen1Floods11
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  partition: 1.0
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  ignore_index: -1
+  num_classes: ${dataset.num_classes}

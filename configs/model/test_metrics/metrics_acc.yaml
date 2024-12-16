@@ -1,0 +1,6 @@
+_target_: src.models.metrics.metrics.MetricsAccuracy
+modalities: ${modalities}
+num_classes: ${dataset.num_classes}
+save_results: False
+get_classes: False
+multilabel: False

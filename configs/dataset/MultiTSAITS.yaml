@@ -1,0 +1,92 @@
+defaults:
+  - train_transform: TreeSAT
+  - test_transform: TreeSAT
+  - _self_
+
+name: MultiTreeSat
+num_classes: 15
+global_batch_size: 
+  tsaits: 128
+  pastishd: 2
+  flair: 64
+shapes:
+  tsaits: 6
+  pastishd: 128
+  flair: 10
+num_patches:
+  tsaits: 36
+  pastishd: 16384
+  flair: 100
+
+iter: ${eval:'38520 // (${dataset.global_batch_size.tsaits} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+
+train_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    tsaits: 
+      _target_: data.TreeSAT.TreeSAT
+      path: ${paths.data_dir}/TreeSat/
+      split: train
+      transform: ${dataset.train_transform}
+      classes: ${dataset.tsaits.classes}
+      partition: ${partition}
+      mono_strict: False
+      norm_path: ${paths.data_dir}/TreeSat/
+      modalities: ${modalities_dict.tsaits}
+
+val_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    tsaits: 
+      _target_: data.TreeSAT.TreeSAT
+      path: ${paths.data_dir}/TreeSat/
+      split: val
+      transform: ${dataset.test_transform}
+      classes: ${dataset.tsaits.classes}
+      partition: 1.0
+      mono_strict: False
+      norm_path: ${paths.data_dir}/TreeSat/  
+      modalities: ${modalities_dict.tsaits}
+
+test_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    tsaits: 
+      _target_: data.TreeSAT.TreeSAT
+      path: ${paths.data_dir}/TreeSat/
+      split: test
+      transform: ${dataset.test_transform}
+      classes: ${dataset.tsaits.classes}
+      partition: 1.0
+      mono_strict: False
+      norm_path: ${paths.data_dir}/TreeSat/
+      modalities: ${modalities_dict.tsaits}
+
+scales:
+  tsaits:
+    - 1
+    - 2
+    #- 3
+
+tsaits:
+  classes: ["Abies",
+            "Acer",
+            "Alnus",
+            "Betula",
+            "Cleared",
+            "Fagus",
+            "Fraxinus",
+            "Larix",
+            "Picea",
+            "Pinus",
+            "Populus",
+            "Prunus",
+            "Pseudotsuga",
+            "Quercus",
+            "Tilia"]

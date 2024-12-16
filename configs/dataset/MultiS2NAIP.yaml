@@ -1,0 +1,83 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: MultiS2NAIP
+num_classes: 6
+global_batch_size: 
+  tsaits: 128
+  pastishd: 2
+  flair: 64
+  planted: 256
+  s2naip: 2
+shapes:
+  tsaits: 6
+  pastishd: 128
+  flair: 10
+  planted: 12
+  s2naip: 64
+num_patches:
+  tsaits: 36
+  pastishd: 16384
+  flair: 100
+  planted: 144
+  s2naip: 4096
+
+iter: ${eval:'${dataset.s2naip.true_len} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+iter_val: ${eval:'${dataset.s2naip.true_len_val} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+
+train_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    s2naip:
+      _target_: data.S2Naip.S2NAIP
+      path: ${paths.data_dir}/S2NAIP-urban/
+      split: train
+      transform: ${dataset.train_transform}
+      partition: ${partition}
+      modalities: ${modalities_dict.s2naip}
+      norm_path: ${paths.data_dir}/S2NAIP-urban/
+
+val_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    s2naip:
+      _target_: data.S2Naip.S2NAIP
+      path: ${paths.data_dir}/S2NAIP-urban/
+      split: val
+      transform: ${dataset.test_transform}
+      partition: 1.0
+      modalities: ${modalities_dict.s2naip}
+      norm_path: ${paths.data_dir}/S2NAIP-urban/
+
+test_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    s2naip:
+      _target_: data.S2Naip.S2NAIP
+      path: ${paths.data_dir}/S2NAIP-urban/
+      split: test
+      transform: ${dataset.test_transform}
+      partition: 1.0
+      modalities: ${modalities_dict.s2naip}
+      norm_path: ${paths.data_dir}/S2NAIP-urban/
+
+scales:
+  s2naip:
+    - 4
+    - 8
+    - 16
+
+s2naip:
+  iter: ${eval:'${dataset.s2naip.true_len} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip})'}
+  iter_val: ${eval:'${dataset.s2naip.true_len_val} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip})'}
+  true_len: 359046
+  true_len_val: 82140
+  reduce_factor: 20

@@ -1,0 +1,5 @@
+_target_: models.losses.Losses
+mix: {
+  CrossEntropyIgnore : 1.0,
+}
+num_classes: ${dataset.num_classes}

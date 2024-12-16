@@ -1,0 +1,28 @@
+# @package _global_
+
+defaults:
+  - override /dataset: TS2C
+  - override /model/network/encoder: Any_Base
+  - override /model/network: Fine_tuning
+  - override /model/loss: PlantedCrossEntropy
+  - override /model/train_metrics: metrics_acc
+  - override /model/val_metrics: metrics_acc
+  - override /model/test_metrics: metrics_acc
+
+model:
+  name: "AnySat_FineTuning_MM_SemSeg"
+  optimizer:
+    lr: 5e-5
+  network:
+    instance:
+      name: "target_encoder"
+      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/OA"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "s2"

@@ -1,0 +1,86 @@
+defaults:
+  - train_transform: FLAIR_multi
+  - test_transform: Identity
+  - _self_
+
+name: MultiFLAIR
+num_classes: 13
+global_batch_size: 
+  tsaits: 128
+  pastishd: 2
+  flair: 16
+shapes:
+  tsaits: 6
+  pastishd: 128
+  flair: 10
+num_patches:
+  tsaits: 36
+  pastishd: 16384
+  flair: 100
+
+iter: ${eval:'49230 // (${dataset.global_batch_size.flair} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+
+train_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    flair: 
+      _target_: data.FLAIR.FLAIR
+      path: ${paths.data_dir}/FLAIR/
+      split: train
+      transform: ${dataset.train_transform}
+      num_classes: ${dataset.flair.num_classes}
+      crop_s2: ${dataset.flair.crop_s2}
+      partition: ${partition}
+      modalities: ${modalities_dict.flair}
+      sat_patch_size: ${dataset.flair.sat_patch_size}
+      classif: ${dataset.flair.classif}
+      norm_path: ${paths.data_dir}/FLAIR/
+
+val_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    flair: 
+      _target_: data.FLAIR.FLAIR
+      path: ${paths.data_dir}/FLAIR/
+      split: val
+      transform: ${dataset.test_transform}
+      num_classes: ${dataset.flair.num_classes}
+      crop_s2: ${dataset.flair.crop_s2}
+      partition: 1.0
+      modalities: ${modalities_dict.flair}
+      sat_patch_size: ${dataset.flair.sat_patch_size}
+      classif: ${dataset.flair.classif}
+      norm_path: ${paths.data_dir}/FLAIR/
+
+test_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    flair: 
+      _target_: data.FLAIR.FLAIR
+      path: ${paths.data_dir}/FLAIR/
+      split: test
+      transform: ${dataset.test_transform}
+      num_classes: ${dataset.flair.num_classes}
+      crop_s2: ${dataset.flair.crop_s2}
+      partition: 1.0
+      modalities: ${modalities_dict.flair}
+      sat_patch_size: ${dataset.flair.sat_patch_size}
+      classif: ${dataset.flair.classif}
+      norm_path: ${paths.data_dir}/FLAIR/
+
+scales:
+  flair:
+    - 1
+    - 2
+
+flair:
+  num_classes: 13
+  crop_s2: True
+  classif: False
+  sat_patch_size: 40

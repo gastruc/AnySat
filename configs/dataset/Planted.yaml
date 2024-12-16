@@ -1,0 +1,89 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: Planted
+global_batch_size: 256
+num_classes: 40
+height: 12
+width: 12
+num_patches: 144
+len: 1075701
+norm_path: ${data_dir} #null
+temporal_dropout: 0.3
+
+train_dataset:
+  _partial_: true
+  _target_: data.Planted.Planted
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  classes: ${dataset.classes}
+  partition: ${partition}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+  temporal_dropout: ${dataset.temporal_dropout}
+
+val_dataset:
+  _partial_: true
+  _target_: data.Planted.Planted
+  path: ${data_dir}
+  split: val
+  transform: ${dataset.test_transform}
+  classes: ${dataset.classes}
+  partition: 1.0
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+test_dataset:
+  _partial_: true
+  _target_: data.Planted.Planted
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  classes: ${dataset.classes}
+  partition: 1.0
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+classes: ["Elaeis guineensis", 
+  "Pinus taeda", 
+  "Pinus rigida", 
+  "Pinus koraiensis", 
+  "Pinus densiflora",
+  "Abies sachalinensis",
+  "Pinus elliottii",
+  "Shorea robusta",
+  "Castanea crenata",
+  "Pseudotsuga menziesii",
+  "Eucalyptus globulus",
+  "Pinus radiata",
+  "Robinia pseudoacacia",
+  "Pinus thunbergii",
+  "Pinus echinata",
+  "Thea sinensis",
+  "Betula pendula",
+  "Hevea brasiliensis",
+  "Picea glehnii",
+  "Quercus acutissima",
+  "Eucalyptus nitens",
+  "Cocos nucifera",
+  "Anacardium occidentale",
+  "Zelkova serrata",
+  "Acer pictum",
+  "Prunus serrulata",
+  "Prunus dulcis",
+  "Picea jezoensis",
+  "Quercus variabilis",
+  "Fraxinus rhynchophylla",
+  "Ginkgo biloba",
+  "Pasania edulis",
+  "Dendropanax morbiferus",
+  "Machilus thunbergii",
+  "Cryptomeria japonica",
+  "Acacia melanoxylon",
+  "Malus pumila",
+  "Picea mariana",
+  "Cornus controversa",
+  "Theobroma cacao"]

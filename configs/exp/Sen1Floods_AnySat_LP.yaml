@@ -1,0 +1,33 @@
+# @package _global_
+
+defaults:
+  - override /dataset: Sen1floods11
+  - override /model/network/encoder: Any_Base
+  - override /model: SemSeg
+  - override /model/network: Fine_tuning_SemSeg
+  - override /model/loss: crossentropy_full
+  - override /model/train_metrics: metrics_seg_pangaea
+  - override /model/val_metrics: metrics_seg_pangaea
+  - override /model/test_metrics: metrics_seg_pangaea
+
+model:
+  name: "AnySat_FineTuning_MM_SemSeg"
+  optimizer:
+    lr: 5e-5
+  network:
+    encoder:
+      scale: 1
+    instance:
+      freeze: True
+      name: "target_encoder"
+      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+
+callbacks:
+  early_stopping:
+    monitor: "val/mIoU"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "s2"
+  - "s1"

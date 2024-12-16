@@ -1,0 +1,4 @@
+_target_: models.losses.Losses
+mix: {
+  BCE : 1.0,
+}

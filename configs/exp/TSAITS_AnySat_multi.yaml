@@ -1,0 +1,30 @@
+# @package _global_
+
+defaults:
+  - override /dataset: MultiTSAITS
+  - override /model: JEPA_multi
+  - override /model/network: JEPAOmni_multi
+  - override /model/network/encoder: Any_Base_multi
+  - override /model/loss: OmniSAT_JEPA
+
+datamodule:
+  _target_: data.datamodule.DataModuleMulti
+
+dataset:
+  global_batch_size:
+    tsaits: 64
+
+model:
+  name: "AnySat"
+  optimizer:
+    lr: 5e-5
+
+callbacks:
+  early_stopping:
+    patience: 200
+
+modalities_dict:
+  tsaits:
+    - "aerial"
+    - "s2"
+    - "s1-asc"

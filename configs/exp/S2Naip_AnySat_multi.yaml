@@ -1,0 +1,29 @@
+# @package _global_
+
+defaults:
+  - override /dataset: MultiS2NAIP
+  - override /model: JEPA_multi
+  - override /model/network: JEPAOmni_multi
+  - override /model/network/encoder: Any_Base_multi
+  - override /model/loss: OmniSAT_JEPA
+
+datamodule:
+  _target_: data.datamodule.DataModuleMulti
+  stop_iteration_train: ${dataset.iter}
+  stop_iteration_val: ${dataset.iter_val}
+  
+model:
+  name: "AnySat"
+  optimizer:
+    lr: 5e-5
+
+callbacks:
+  early_stopping:
+    patience: 200
+
+modalities_dict:
+  s2naip:
+    - "naip"
+    - "l8"
+    - "s2"
+    - "s1"

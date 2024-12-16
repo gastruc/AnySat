@@ -1,0 +1,4 @@
+_target_: data.transforms.transform.Transform
+p: 0.0
+size: 300
+classif: True

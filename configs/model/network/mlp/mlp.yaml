@@ -1,0 +1,13 @@
+defaults:
+  - activation: gelu
+  - norm: batchnorm #instance_1d #groupnorm
+
+instance:
+  _target_: models.networks.mlp.MLP
+  initial_dim: ${model.network.encoder.output_dim}
+  hidden_dim:
+    - 128
+    - 64
+  final_dim: ${dataset.num_classes}
+  norm: ${model.network.mlp.norm}
+  activation: ${model.network.mlp.activation}

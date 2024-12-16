@@ -1,0 +1,291 @@
+defaults:
+  - train_transform: GeoPlex
+  - test_transform: GeoPlex
+  - _self_
+
+name: GeoPlex
+global_batch_size: 
+  tsaits: 128
+  pastishd: 1
+  flair: 32
+  planted: 256
+  s2naip: 2
+shapes:
+  tsaits: 6
+  pastishd: 128
+  flair: 10
+  planted: 12
+  s2naip: 64
+num_patches:
+  tsaits: 36
+  pastishd: 16384
+  flair: 100
+  planted: 144
+  s2naip: 4096
+
+iter: ${eval:'${dataset.s2naip.true_len} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+iter_val: ${eval:'${dataset.s2naip.true_len_val} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip} * ${trainer.devices} * ${trainer.trainer.num_nodes})'}
+
+train_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    pastishd: 
+      _target_: data.Pastis.PASTIS
+      path: ${paths.data_dir}/PASTIS-R/
+      modalities: ${modalities_dict.pastishd}
+      transform: ${dataset.train_transform}
+      reference_date: "2018-09-01"
+      folds: [1, 2, 3]
+      nb_split: 1
+      classif: ${dataset.pastishd.classif}
+      norm_path: ${paths.data_dir}/PASTIS-R/
+      split: train
+      temporal_dropout: ${dataset.pastishd.temporal_dropout}
+    tsaits: 
+      _target_: data.TreeSAT.TreeSAT
+      path: ${paths.data_dir}/TreeSat/
+      split: train
+      transform: ${dataset.train_transform}
+      classes: ${dataset.tsaits.classes}
+      partition: ${partition}
+      mono_strict: False
+      norm_path: ${paths.data_dir}/TreeSat/
+      modalities: ${modalities_dict.tsaits}
+    flair: 
+      _target_: data.FLAIR.FLAIR
+      path: ${paths.data_dir}/FLAIR/
+      split: train
+      transform: ${dataset.train_transform}
+      num_classes: ${dataset.flair.num_classes}
+      crop_s2: ${dataset.flair.crop_s2}
+      partition: ${partition}
+      modalities: ${modalities_dict.flair}
+      sat_patch_size: ${dataset.flair.sat_patch_size}
+      norm_path: ${paths.data_dir}/FLAIR/
+      classif: ${dataset.flair.classif}
+    planted:
+      _target_: data.Planted.Planted
+      path: ${paths.data_dir}/Planted/
+      split: train
+      transform: ${dataset.train_transform}
+      classes: ${dataset.planted.classes}
+      partition: ${partition}
+      modalities: ${modalities_dict.planted}
+      norm_path: ${paths.data_dir}/Planted
+      density_sampling: False
+    s2naip:
+      _target_: data.S2Naip.S2NAIP
+      path: ${paths.data_dir}/S2NAIP-urban/
+      split: train
+      transform: ${dataset.train_transform}
+      partition: ${partition}
+      modalities: ${modalities_dict.s2naip}
+      norm_path: ${paths.data_dir}/S2NAIP-urban/
+
+val_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    pastishd: 
+      _target_: data.Pastis.PASTIS
+      path: ${paths.data_dir}/PASTIS-R/
+      modalities: ${modalities_dict.pastishd}
+      transform: ${dataset.train_transform}
+      reference_date: "2018-09-01"
+      folds: [4]
+      nb_split: 1
+      classif: ${dataset.pastishd.classif}
+      norm_path: ${paths.data_dir}/PASTIS-R/
+      split: val
+    tsaits: 
+      _target_: data.TreeSAT.TreeSAT
+      path: ${paths.data_dir}/TreeSat/
+      split: val
+      transform: ${dataset.test_transform}
+      classes: ${dataset.tsaits.classes}
+      partition: 1.0
+      mono_strict: False
+      norm_path: ${paths.data_dir}/TreeSat/  
+      modalities: ${modalities_dict.tsaits}
+    flair: 
+      _target_: data.FLAIR.FLAIR
+      path: ${paths.data_dir}/FLAIR/
+      split: val
+      transform: ${dataset.test_transform}
+      num_classes: ${dataset.flair.num_classes}
+      crop_s2: ${dataset.flair.crop_s2}
+      partition: 1.0
+      modalities: ${modalities_dict.flair}
+      sat_patch_size: ${dataset.flair.sat_patch_size}
+      classif: ${dataset.flair.classif}
+      norm_path: ${paths.data_dir}/FLAIR/
+    planted: 
+      _target_: data.Planted.Planted
+      path: ${paths.data_dir}/Planted/
+      split: val
+      transform: ${dataset.test_transform}
+      classes: ${dataset.planted.classes}
+      partition: 1.0
+      modalities: ${modalities_dict.planted}
+      norm_path: ${paths.data_dir}/Planted
+    s2naip:
+      _target_: data.S2Naip.S2NAIP
+      path: ${paths.data_dir}/S2NAIP-urban/
+      split: val
+      transform: ${dataset.test_transform}
+      partition: 1.0
+      modalities: ${modalities_dict.s2naip}
+      norm_path: ${paths.data_dir}/S2NAIP-urban/
+
+test_dataset:
+  _partial_: true
+  _target_: data.MultiDataset.MultiDataset
+  scales: ${dataset.scales}
+  datasets:
+    pastishd: 
+      _target_: data.Pastis.PASTIS
+      path: ${paths.data_dir}/PASTIS-R/
+      modalities: ${modalities_dict.pastishd}
+      transform: ${dataset.train_transform}
+      reference_date: "2018-09-01"
+      folds: [5]
+      nb_split: 1
+      classif: ${dataset.pastishd.classif}
+      norm_path: ${paths.data_dir}/PASTIS-R/
+      split: test
+    tsaits: 
+      _target_: data.TreeSAT.TreeSAT
+      path: ${paths.data_dir}/TreeSat/
+      split: test
+      transform: ${dataset.test_transform}
+      classes: ${dataset.tsaits.classes}
+      partition: 1.0
+      mono_strict: False
+      norm_path: ${paths.data_dir}/TreeSat/
+      modalities: ${modalities_dict.tsaits}
+    flair: 
+      _target_: data.FLAIR.FLAIR
+      path: ${paths.data_dir}/FLAIR/
+      split: test
+      transform: ${dataset.test_transform}
+      num_classes: ${dataset.flair.num_classes}
+      crop_s2: ${dataset.flair.crop_s2}
+      partition: 1.0
+      modalities: ${modalities_dict.flair}
+      sat_patch_size: ${dataset.flair.sat_patch_size}
+      classif: ${dataset.flair.classif}
+      norm_path: ${paths.data_dir}/FLAIR/
+    planted: 
+      _target_: data.Planted.Planted
+      path: ${paths.data_dir}/Planted/
+      split: test
+      transform: ${dataset.test_transform}
+      classes: ${dataset.planted.classes}
+      partition: 1.0
+      modalities: ${modalities_dict.planted}
+      norm_path: ${paths.data_dir}/Planted
+    s2naip:
+      _target_: data.S2Naip.S2NAIP
+      path: ${paths.data_dir}/S2NAIP-urban/
+      split: test
+      transform: ${dataset.test_transform}
+      partition: 1.0
+      modalities: ${modalities_dict.s2naip}
+      norm_path: ${paths.data_dir}/S2NAIP-urban/
+
+scales:
+  pastishd:
+    - 4
+    - 8
+    - 16
+  tsaits:
+    - 1
+    - 2
+  s2naip:
+    - 4
+    - 8
+    - 16
+  flair:
+    - 1
+    - 2
+  planted:
+    - 3
+
+planted:
+  classes: ["Elaeis guineensis", 
+        "Pinus taeda", 
+        "Pinus rigida", 
+        "Pinus koraiensis", 
+        "Pinus densiflora",
+        "Abies sachalinensis",
+        "Pinus elliottii",
+        "Shorea robusta",
+        "Castanea crenata",
+        "Pseudotsuga menziesii",
+        "Eucalyptus globulus",
+        "Pinus radiata",
+        "Robinia pseudoacacia",
+        "Pinus thunbergii",
+        "Pinus echinata",
+        "Thea sinensis",
+        "Betula pendula",
+        "Hevea brasiliensis",
+        "Picea glehnii",
+        "Quercus acutissima",
+        "Eucalyptus nitens",
+        "Cocos nucifera",
+        "Anacardium occidentale",
+        "Zelkova serrata",
+        "Acer pictum",
+        "Prunus serrulata",
+        "Prunus dulcis",
+        "Picea jezoensis",
+        "Quercus variabilis",
+        "Fraxinus rhynchophylla",
+        "Ginkgo biloba",
+        "Pasania edulis",
+        "Dendropanax morbiferus",
+        "Machilus thunbergii",
+        "Cryptomeria japonica",
+        "Acacia melanoxylon",
+        "Malus pumila",
+        "Picea mariana",
+        "Cornus controversa",
+        "Theobroma cacao"]
+
+flair:
+  num_classes: 13
+  crop_s2: True
+  classif: False
+  sat_patch_size: 40
+
+s2naip:
+  iter: ${eval:'${dataset.s2naip.true_len} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip} * ${trainer.devices})'}
+  iter_val: ${eval:'${dataset.s2naip.true_len_val} // (${dataset.s2naip.reduce_factor} * ${dataset.global_batch_size.s2naip} * ${trainer.devices})'}
+  true_len: 359046
+  true_len_val: 82140
+  reduce_factor: 10
+
+pastishd:
+  classif: True
+  temporal_dropout: 20
+
+tsaits:
+  classes: ["Abies",
+            "Acer",
+            "Alnus",
+            "Betula",
+            "Cleared",
+            "Fagus",
+            "Fraxinus",
+            "Larix",
+            "Picea",
+            "Pinus",
+            "Populus",
+            "Prunus",
+            "Pseudotsuga",
+            "Quercus",
+            "Tilia"]
