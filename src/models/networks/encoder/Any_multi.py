@@ -219,7 +219,8 @@ class AnyModule(nn.Module):
                     token = getattr(self, '_'.join(['projector', modality]))(x[modality], x['_'.join([modality, "dates"])], scale)
             
             if pos_embed is None and modality != "modis":
-                _, N, C = token.shape
+                B, _, C = token.shape
+                N = B // batch_size
                 num_patches = int(N**(1/2))
                 pos_embed = get_2d_sincos_pos_embed_with_scale(C, 
                                                        num_patches, 
@@ -245,18 +246,9 @@ class AnyModule(nn.Module):
         for blk in self.blocks[:-1]:
             tokens = blk(tokens)
         tokens = self.blocks[-1].forward_release(tokens, n_modalities=n_modalities, modis=modis, scale=scale)
-        if self.keep_subpatch:
-            return tokens, out
-            tokens = tokens.unsqueeze(2).permute(0, 2, 4, 1, 3)
-            tokens = tokens.view(B, 1, C, num_patches, num_patches, scale, scale)
-        
-        #B, N, D = tokens.shape
-        print(tokens.shape)
-        tokens = tokens.view(batch_size, -1, num_patches + 1, C)
-        print(tokens.shape)
-        #.view(batch_size, N, 1, self.final_dim, scale * scale).permute(0, 2, 3, 1, 4)
-        tokens = tokens.view(batch_size, 1, self.final_dim, N, scale, scale)
-        tokens = tokens.view(batch_size, 1, self.final_dim, num_patches, num_patches, scale, scale).permute(0, 1, 2, 3, 5, 4, 6)
-        #tokens = tokens.reshape(B, 1, self.final_dim, size, size).flatten(0, 1)
+        if keep_subpatch:
+            tokens = tokens[:, 1:].unsqueeze(2).repeat(1, 1, out['subpatches'].shape[2], 1)
+            dense_tokens = torch.cat([tokens, out['subpatches']], dim = 3)
+            return dense_tokens
         return tokens
 

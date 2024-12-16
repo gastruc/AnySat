@@ -7,11 +7,6 @@ try:
     from models.networks.encoder.utils.rpe_ops.rpe_index import RPEIndexFunction
 except ImportError:
     RPEIndexFunction = None
-    import warnings
-    RED_STR = "\033[91m{}\033[00m"
-    warnings.warn(RED_STR.format("[WARNING] The module `rpe_ops` is not built. \
-For better training performance, please build `rpe_ops`."),)
-
 
 @torch.no_grad()
 def piecewise_index(relative_position, alpha, beta, gamma, dtype):
@@ -941,14 +936,14 @@ def build_rpe(config, head_dim, num_heads, n_modalities=1):
         if rpe is None:
             return None
 
-        rpe_cls = iRPE if rpe.method != METHOD.CROSS else iRPE_Cross
+        rpe_cls = iRPE if rpe['method'] != METHOD.CROSS else iRPE_Cross
         return rpe_cls(
             head_dim=head_dim,
-            num_heads=1 if rpe.shared_head else num_heads,
-            mode=rpe.mode,
-            method=rpe.method,
+            num_heads=1 if rpe['shared_head'] else num_heads,
+            mode=rpe['mode'],
+            method=rpe['method'],
             transposed=transposed,
-            num_buckets=rpe.num_buckets,
+            num_buckets=rpe['num_buckets'],
             rpe_config=rpe,
             n_modalities=n_modalities
         )
