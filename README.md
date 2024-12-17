@@ -23,7 +23,7 @@ Official implementation for
 
 # Abstract
 
-We introduce AnySat, a novel architecture that exploits the spatial alignment between multiple Earth Observation (EO) modalities to learn expressive multimodal representations without labels. To demonstrate the advantages of combining modalities of different natures, we augment two existing datasets with new modalities. Through extensive experiments on three downstream tasks - forestry, land cover classification, and crop mapping - AnySat demonstrates its ability to learn rich representations in an unsupervised manner, leading to improved performance in both semi- and fully-supervised settings, even when only one modality is available for inference.
+We introduce AnySat, a novel architecture that exploits the spatial alignment between multiple Earth Observation (EO) modalities to learn expressive multimodal representations without labels. Through extensive experiments on five downstream tasks - forestry, land cover classification, crop, flood, deforestation mapping - AnySat demonstrates its ability to learn rich representations in an unsupervised manner, leading to improved performance in both linear probing and fine-tuning settings, even when only one modality or single date sample is available for inference.
 
 <p align="center">
   <img src=".media/teaser.png" alt="AnySat Teaser" width="800">
