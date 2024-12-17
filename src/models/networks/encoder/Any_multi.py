@@ -199,10 +199,13 @@ class AnyModule(nn.Module):
             return tokens, out
         return tokens
     
-    def forward_release(self, x, scale, keep_subpatch=False, modality_keep=''):
+    def forward_release(self, x, scale, output='patch', modality_keep=''):
         tokens = []
         out = {}
+        keep_subpatch = (output == 'dense')
         modalities = [mod for mod in x.keys() if not (mod.endswith('_dates') or mod.endswith('_mask'))]
+        if keep_subpatch and modality_keep == '':
+            modality_keep = modalities[0]
         batch_size = x[modalities[0]].shape[0]
         device = x[modalities[0]].device
         n_modalities = len(modalities)
@@ -250,5 +253,9 @@ class AnyModule(nn.Module):
             tokens = tokens[:, 1:].unsqueeze(2).repeat(1, 1, out['subpatches'].shape[2], 1)
             dense_tokens = torch.cat([tokens, out['subpatches']], dim = 3)
             return dense_tokens
+        if output == 'tile':
+            return tokens[:, 0, :]
+        if output == 'patch':
+            return tokens[:, 1:, :]
         return tokens
 

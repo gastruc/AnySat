@@ -8,14 +8,9 @@ import torch
 import torch.nn as nn
 from pathlib import Path
 
-# Add src directory to Python path and create models symbolic link
 REPO_ROOT = Path(__file__).parent
-sys.path.append(str(REPO_ROOT))
-sys.path.append(str(REPO_ROOT / "src"))
-
-# Create symbolic link from src/models to models
-if not (REPO_ROOT / "models").exists():
-    os.symlink(REPO_ROOT / "src/models", REPO_ROOT / "models")
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.append(str(REPO_ROOT / "src"))
 
 dependencies = ['torch']
 
@@ -91,8 +86,9 @@ class AnySat(nn.Module):
         model.model.load_state_dict(state_dict)
         return model
     
-    def forward(self, x, patch_size, **kwargs):
-        return self.model.forward_release(x, patch_size // 10, **kwargs)
+    def forward(self, x, patch_size, output='patch', **kwargs):
+        assert output in ['patch', 'tile', 'dense', 'all'], "Output must be one of 'patch', 'tile', 'dense', 'all'"
+        return self.model.forward_release(x, patch_size // 10, output=output, **kwargs)
 
 # Hub entry points
 def anysat(pretrained=False, **kwargs):
