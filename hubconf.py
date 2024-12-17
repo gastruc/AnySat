@@ -91,8 +91,8 @@ class AnySat(nn.Module):
         model.model.load_state_dict(state_dict)
         return model
     
-    def forward(self, x, scale, **kwargs):
-        return self.model.forward_release(x, scale // 10, **kwargs)
+    def forward(self, x, patch_size, **kwargs):
+        return self.model.forward_release(x, patch_size // 10, **kwargs)
 
 # Hub entry points
 def anysat(pretrained=False, **kwargs):

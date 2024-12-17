@@ -108,15 +108,15 @@ Achieves state-of-the-art or near state-of-the-art performance on multiple datas
 
 # Basic usage of the model
 
-See [huggingface page](https://huggingface.co/gastruc/anysat) for more details.
+See [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/gastruc/anysat) for more details.
 
 ```python
 
-from anysat import AnySat
+import torch
 
-anysat = AnySat.from_pretrained("gastruc/anysat")
+AnySat = torch.hub.load('gastruc/anysat', 'anysat', pretrained=True, flash_attn=False) #Set flash_attn=True if you have flash-attn module installed (https://pypi.org/project/flash-attn/). It is not required for the model to work and do not impact the results. It is only more efficient in terms of memory and speed.
 
-features = anysat(features, scale=scale)
+features = AnySat(data, scale=scale)
 
 ```
 
@@ -141,6 +141,16 @@ mkdir logs
 ```
 
 # Usage
+
+To load the model locally, you can use the following code:
+```python
+
+from hubconf import AnySat
+
+AnySat = AnySat.from_pretrained('base', flash_attn=False) #Set flash_attn=True if you have flash-attn module installed
+#For now, only base is available.
+#device = "cuda" If you want to run on GPU default is cpu
+```
 
 Every experience of the paper has its own config. Feel free to explore configs/exp folder.
 
