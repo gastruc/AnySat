@@ -23,24 +23,145 @@ Official implementation for
 
 # Abstract
 
-We introduce AnySat, a novel architecture that exploits the spatial alignment between multiple Earth Observation (EO) modalities to learn expressive multimodal representations without labels. Through extensive experiments on five downstream tasks - forestry, land cover classification, crop, flood, deforestation mapping - AnySat demonstrates its ability to learn rich representations in an unsupervised manner, leading to improved performance in both linear probing and fine-tuning settings, even when only one modality or single date sample is available for inference.
+**AnySat** is a versatile Earth Observation model designed to handle diverse data across resolutions, scales, and modalities. Using a **scale-adaptive joint embedding predictive architecture** (JEPA), AnySat can train in a self-supervised manner on highly heterogeneous datasets.
+
+We train a single AnySat model on **GeoPlex**, a collection of 5 multimodal datasets spanning 11 sensors with varying characteristics. In fine-tuning or linear probing, AnySat achieves SOTA or near-SOTA performance for land cover segmentation, crop type classification, change detection, tree species identification, and flood mapping.
 
 <p align="center">
   <img src=".media/teaser.png" alt="AnySat Teaser" width="800">
 </p>
 
 # Key Features
+- 🌍 **Versatile Model**:Handles diverse datasets with resolutions spanning **3–11 channels**, tiles ranging from **0.3 to 2600 hectares**, and any combination of **11 sensors**.
+- 🚀 **Simple to Use**: Install and download AnySat with a single line of code, select your desired modalities and patch size, and immediately generate rich features.
+- 🦋 **Flexible Task Adaptation**: Supports fine-tuning and linear probing for tasks like **tile-wise classification** and **semantic segmentation**.
+- 🧑‍🎓 **Multi-dataset Training**: Trains a single model across multiple datasets with varying characteristics.
 
-- **Multimodal Training**: Trains simultaneously on a collection of 5 multimodal datasets with 11 distinct sensors.
-- **Adaptive Patch Encoding**: Processes images with various patch sizes depending on the application, ensuring adaptability to different data scales and resolutions.
-- **Efficient Architecture**: Features modality-specific projectors and a shared transformer, with over 75% of learnable parameters shared across all modalities and resolutions.
-- **Dense Maps and Linear Probing**: Produces dense maps and allows for linear probing in segmentation tasks without needing complex heads like UPerNet.
 
-# Datasets
+# 🚀  Quickstart
+
+Check out our [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/gastruc/anysat) for more details.
+
+## Install and load Anysat
+
+```python
+
+import torch
+
+AnySat = torch.hub.load('gastruc/anysat', 'anysat', pretrained=True, flash_attn=False)
+
+```
+Set `flash_attn=True` if you have [flash-attn](https://pypi.org/project/flash-attn/) module installed. It is not required and only impacts memory and speed.
+
+## Format your data
+
+Arrange your data in a dictionary with any of the following keys:
+
+| Dataset       | Description                       | Tensor Size                                          | Channels                                  | Resolution |
+|---------------|-----------------------------------|-----------------------------------------|-------------------------------------------|------------|
+| aerial        | Single date tensor |Bx4xHxW                                              | RGB, NiR                                  | 0.2m       |
+| aerial-flair  | Single date tensor |Bx5xHxW                                              | RGB, NiR, Elevation                       | 0.2m       |
+| spot          | Single date tensor |Bx3xHxW                                              | RGB                                       | 1m         |
+| naip          | Single date tensor |Bx4xHxW                                              | RGB                                       | 1.25m      |
+| s2            | Time series tensor |BxTx10xHxW                                           | B2, B3, B4, B5, B6, B7, B8, B8a, B11, B12 | 10m        |
+| s1-asc        | Time series tensor |BxTx2xHxW                                            | VV, VH                                    | 10m        |
+| s1            | Time series tensor |BxTx3xHxW                                            | VV, VH, Ratio                             | 10m        |
+| alos          | Time series tensor |BxTx3xHxW                                            | HH, HV, Ratio                             | 30m        |
+| l7            | Time series tensor |BxTx6xHxW                                            | B1, B2, B3, B4, B5, B7                    | 30m        |
+| l8            | Time series tensor |BxTx11xHxW                                           | B8, B1, B2, B3, B4, B5, B6, B7, B9, B10, B11 | 10m     |
+| modis         | Time series tensor |BxTx7xHxW                                            | B1, B2, B3, B4, B5, B6, B7                | 250m       |
+   
+Note that time series requires a `_dates` companion tensor containing the day of the year: 01/01 = 0, 31/12=364.
+
+**Example Input** for a tile of 60x60m and a batch size of B:
+
+```python
+data = {
+    "aerial": ... #Tensor of size [B, 4, 300, 300] : 4 channels, 300x300 pixels at 20cm res
+    "spot": ... #Tensor of size [B, 3, 60, 60]: 3 channels, 60x60 pixels at 1m res
+    "s2": ... #Tensor of size [B, 12, 10, 6, 6] : 12 dates, 10 channels, 6x6 pixels at 10m res
+    "s2_dates":  ... #Tensor of size [B, 12] : 12 dates
+}
+```
+Ensure that the spatial extent of each modality multiplied by its resolution is consistent.
+
+## Extract Features
+
+Decide on:
+- **Patch size** (in m, must be a multiple of 10): adjust according to the scale of your tiles and GPU memory. In general, avoid having more than 1024 patches per tile.
+- **Output type**: Choose between:
+  - `'tile'`: Single vector per tile
+  - `'patch'`: A vector per patch
+  - `'dense'`: A vector per sub-patch
+  - `'all'`: a tuple with all three outputs
+ 
+The sub patches are `1x1` pixels for time series and `10x10` pixels for VHR images. If using `output='dense'`, specify the `output_modality`.
+
+Example use:
+```python
+features = AnySat(data, scale=10, output='tile') #tensor of size [D,]
+features = AnySat(data, scale=10, output='patch') #tensor of size [D,6,6]
+features = AnySat(data, scale=20, output='patch') #tensor of size [D,3,3]
+features = AnySat(data, scale=20, output='dense', output_modality='aerial') #tensor of size [D,30,30]
+```
+**Explanation for the size of the dense map:** `d=10` for 'aerial' which has a 0.2m resolution, the sub-patches are 2x2 m.
+
+# Advanced Installation
+
+## Install from source
+
+```bash
+# clone project
+git clone https://github.com/gastruc/anysat
+cd anysat
+
+# [OPTIONAL] create conda environment
+conda create -n anysat python=3.9
+conda activate anysat
+
+# install requirements
+pip install -r requirements.txt
+
+# Create data folder where you can put your datasets
+mkdir data
+# Create logs folder
+mkdir logs
+```
+
+## Run Locally
+
+To load the model locally, you can use the following code:
+```python
+
+from hubconf import AnySat
+
+AnySat = AnySat.from_pretrained('base', flash_attn=False) #Set flash_attn=True if you have flash-attn module installed
+#For now, only base is available.
+#device = "cuda" If you want to run on GPU default is cpu
+```
+
+Every experience of the paper has its config file. Feel free to explore `configs/exp` folder.
+
+```bash
+# Run AnySat pretraining on GeoPlex
+python src/train.py exp=GeoPlex_AnySAT
+
+# Run AnySat finetuning on BraDD-S1TS
+python src/train.py exp=BraDD_AnySAT_FT
+
+# Run AnySat linear probing on BraDD-S1TS
+python src/train.py exp=BraDD_AnySAT_LP
+```
+
+# Supported Datasets
+
+Our implementation already supports 9 datasets:
+
+<p align="center">
+  <img src=".media/datasets.png" alt="AnySat Datasets">
+</p>
 
 ## GeoPlex Datasets
-
-GeoPlex is composed of five distinct datasets, each offering a rich combination of data types, modalities, and resolutions. Below is a summary of each dataset:
 
 1. **TreeSatAI-TS**
    - **Description**: Multimodal dataset for tree species identification.
@@ -74,8 +195,6 @@ GeoPlex is composed of five distinct datasets, each offering a rich combination 
 
 ## External Evaluation Datasets
 
-In addition to GeoPlex, AnySat was evaluated on the following external datasets:
-
 1. **BraDD-S1TS**
    - **Description**: Change detection dataset for deforestation in the Amazon rainforest.
    - **Extent**: 13,234 tiles with Sentinel-1 time series.
@@ -90,81 +209,22 @@ In addition to GeoPlex, AnySat was evaluated on the following external datasets:
    - **Description**: Crop mapping dataset from Slovenia.
    - **Extent**: 1,212,224 single-pixel Sentinel-2 time series.
    - **Tasks**: Crop type classification.
+  
+4. **Sen1Flood11**
+   - **Description**: Flood mapping dataset with global scope.
+   - **Extent**: 4.8K Sentinel-1/2 time series.
+   - **Tasks**: Flood classification (flooded/ not flooded).
+  
+# Reference
 
-
-<p align="center">
-  <img src=".media/datasets.png" alt="AnySat Datasets">
-</p>
-
-# Results
-
-Achieves state-of-the-art or near state-of-the-art performance on multiple datasets and tasks, demonstrating robustness across different sensor configurations and geographical regions.
-
-<p align="center">
-  <img src=".media/results.png" alt="AnySat Results">
-</p>
-
-# 🚀  Quickstart
-
-# Basic usage of the model
-
-See [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/gastruc/anysat) for more details.
-
-```python
-
-import torch
-
-AnySat = torch.hub.load('gastruc/anysat', 'anysat', pretrained=True, flash_attn=False) #Set flash_attn=True if you have flash-attn module installed (https://pypi.org/project/flash-attn/). It is not required for the model to work and do not impact the results. It is only more efficient in terms of memory and speed.
-
-features = AnySat(data, scale=scale)
-
-```
-
-## Repo installation
-
-```bash
-# clone project
-git clone https://github.com/gastruc/AnySat
-cd AnySat
-
-# [OPTIONAL] create conda environment
-conda create -n anysat python=3.9 pytorch=2.2.0 cudatoolkit=11.8 -c pytorch -c conda-forge
-conda activate anysat
-
-# install requirements
-pip install -r requirements.txt
-
-# Create data folder where you can put your datasets
-mkdir data
-# Create logs folder
-mkdir logs
-```
-
-You can download the pretrained models [here](https://huggingface.co/gastruc/anysat/tree/main) and put it in the .models folder. The 2 different models depend on the usage.
-
-# Usage
-
-To load the model locally to extract features, you can use the following code:
-```python
-
-from hubconf import AnySat
-
-AnySat = AnySat.from_pretrained('base', flash_attn=False) #Set flash_attn=True if you have flash-attn module installed
-#For now, only base is available.
-#device = "cuda" If you want to run on GPU default is cpu
-```
-
-Every experience of the paper has its own config. Feel free to explore configs/exp folder.
-
-```bash
-# Run AnySat pretraining on GeoPlex
-python src/train.py exp=GeoPlex_AnySAT
-
-# Run AnySat finetuning on BraDD-S1TS
-python src/train.py exp=BraDD_AnySAT_FT
-
-# Run AnySat linear probing on BraDD-S1TS
-python src/train.py exp=BraDD_AnySAT_LP
+Please use the following bibtex:
+```bibtex
+@article{astruc2024anysat,
+  title={{AnySat: An Earth} Observation Model for Any Resolutions, Scales, and Modalities},
+  author={Astruc, Guillaume and Gonthier, Nicolas and Mallet, Clement and Landrieu, Loic},
+  journal={arXiv preprint arXiv:2412.XXXX},
+  year={2024}
+}
 ```
 
 # Acknowledgements
