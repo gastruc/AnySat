@@ -33,8 +33,10 @@ class CrossEntropyIgnore(nn.Module):
         """
         if len(y["label"].shape) > 1:
             x = x.flatten(2, 3)
-            y["label"] = y["label"].flatten(1, 2)
-        return {"cross_entropy_loss": nn.functional.cross_entropy(x, y["label"].long(), ignore_index=-1)}
+            label = y["label"].flatten(1, 2)
+        else:
+            label = y["label"]
+        return {"cross_entropy_loss": nn.functional.cross_entropy(x, label.long(), ignore_index=-1)}
 
 class CrossEntropy(nn.Module):
     def __init__(self):

@@ -252,8 +252,9 @@ class MetricsSemSeg(Metric):
             self.results = {}
 
     def update(self, pred, gt):
+        label = gt['label'].flatten(0, 1).long()
         self.miou(torch.nn.functional.one_hot(pred.flatten(2, 3).permute(0, 2 ,1).flatten(0, 1).argmax(dim=1), num_classes=self.num_classes), 
-                  torch.nn.functional.one_hot(gt['label'].flatten(1, 2).flatten(0, 1).long(), num_classes=self.num_classes))
+                  torch.nn.functional.one_hot(label, num_classes=self.num_classes))
         if self.save_results:
             for i, name in enumerate(gt['name']):
                 self.results[name] = list(pred.cpu()[i].numpy())
@@ -305,7 +306,7 @@ class MetricsSemSegJ(Metric):
 
     def update(self, pred, gt):
         self.miou(pred.flatten(2, 3).permute(0, 2 ,1).flatten(0, 1).argmax(dim=1), 
-                  gt['label'].flatten(0, 1).long())
+                  gt['label'].flatten(1, 2).flatten(0, 1).long())
         if self.save_results:
             for i, name in enumerate(gt['name']):
                 np.save(self.save_dir + str(name) + '.npy', pred.cpu()[i].numpy())
@@ -505,7 +506,6 @@ class IoU(Metric):
 
         """
         target = tg['label']
-        print(predicted.shape, target.shape)
         # Dimensions check
         assert predicted.size(0) == target.size(0), \
             'number of targets and predicted outputs do not match'

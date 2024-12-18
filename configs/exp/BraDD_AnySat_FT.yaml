@@ -6,9 +6,9 @@ defaults:
   - override /model: SemSeg
   - override /model/network: Fine_tuning_SemSeg
   - override /model/loss: CrossEntropyIgnore
-  - override /model/train_metrics: metrics_segsemJ
-  - override /model/val_metrics: metrics_segsemJ
-  - override /model/test_metrics: metrics_segsemJ
+  - override /model/train_metrics: metrics_semseg
+  - override /model/val_metrics: metrics_semseg
+  - override /model/test_metrics: metrics_semseg
 
 dataset:
   classif: False
