@@ -58,7 +58,10 @@ class AnySat(nn.Module):
         self.spatial_encoder = TransformerMulti(**self.config['spatial_encoder'])
         del self.config['spatial_encoder']
         from src.models.networks.encoder.Any_multi import AnyModule  # Import your actual model class
-        self.model = AnyModule(projectors=projectors, spatial_encoder=self.spatial_encoder, **self.config)
+        with warnings.catch_warnings():
+            # Ignore all warnings during model initialization
+            warnings.filterwarnings('ignore')
+            self.model = AnyModule(projectors=projectors, spatial_encoder=self.spatial_encoder, **self.config)
         
         if device is not None:
             self.model = self.model.to(device)

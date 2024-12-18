@@ -99,10 +99,11 @@ The sub patches are `1x1` pixels for time series and `10x10` pixels for VHR imag
 
 Example use:
 ```python
-features = AnySat(data, scale=10, output='tile') #tensor of size [D,]
-features = AnySat(data, scale=10, output='patch') #tensor of size [D,6,6]
-features = AnySat(data, scale=20, output='patch') #tensor of size [D,3,3]
-features = AnySat(data, scale=20, output='dense', output_modality='aerial') #tensor of size [D,30,30]
+features = AnySat(data, patch_size=10, output='tile') #tensor of size [B, D,]
+features = AnySat(data, patch_size=10, output='patch') #tensor of size [B, D, 6, 6]
+features = AnySat(data, patch_size=20, output='patch') #tensor of size [B, D, 3, 3]
+features = AnySat(data, patch_size=20, output='dense', output_modality='aerial') #tensor of size [B, 2*D, 30, 30]
+features = AnySat(data, patch_size=20, output='dense', output_modality='s2') #tensor of size [B, 2*D, 6, 6]
 ```
 **Explanation for the size of the dense map:** `d=10` for 'aerial' which has a 0.2m resolution, the sub-patches are 2x2 m.
 

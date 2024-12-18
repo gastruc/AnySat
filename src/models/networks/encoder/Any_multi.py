@@ -199,13 +199,13 @@ class AnyModule(nn.Module):
             return tokens, out
         return tokens
     
-    def forward_release(self, x, scale, output='patch', modality_keep=''):
+    def forward_release(self, x, scale, output='patch', output_modality=''):
         tokens = []
         out = {}
         keep_subpatch = (output == 'dense')
         modalities = [mod for mod in x.keys() if not (mod.endswith('_dates') or mod.endswith('_mask'))]
-        if keep_subpatch and modality_keep == '':
-            modality_keep = modalities[0]
+        if keep_subpatch and output_modality == '':
+            output_modality = modalities[0]
         batch_size = x[modalities[0]].shape[0]
         device = x[modalities[0]].device
         n_modalities = len(modalities)
@@ -229,7 +229,7 @@ class AnyModule(nn.Module):
                                                        num_patches, 
                                                        scale, 
                                                        cls_token=True).to(device)
-            if keep_subpatch and modality == modality_keep:
+            if keep_subpatch and modality == output_modality:
                 token, subs = self.spatial_encoder.forward_release(token, modality, scale, keep_subpatch=True)
                 out['_'.join(['subpatches'])] = subs.view(-1, N, subs.shape[1], subs.shape[2])
             else:
@@ -252,11 +252,18 @@ class AnyModule(nn.Module):
         if keep_subpatch:
             tokens = tokens[:, 1:].unsqueeze(2).repeat(1, 1, out['subpatches'].shape[2], 1)
             dense_tokens = torch.cat([tokens, out['subpatches']], dim = 3)
+            B, N, P, D = dense_tokens.shape
+            patch_size = int(P**(1/2))
+            size = num_patches * patch_size
+            dense_tokens = dense_tokens.unsqueeze(2).permute(0, 2, 4, 1, 3)
+            dense_tokens = dense_tokens.view(B, 1, D, N, patch_size, patch_size)
+            dense_tokens = dense_tokens.view(B, 1, D, num_patches, num_patches, patch_size, patch_size).permute(0, 1, 2, 3, 5, 4, 6)
+            dense_tokens = dense_tokens.reshape(B, 1, D, size, size).flatten(0, 1).permute(0, 2, 3, 1)
             return dense_tokens
         if output == 'tile':
             return tokens[:, 0, :]
         if output == 'patch':
-            return tokens[:, 1:, :]
+            return tokens[:, 1:, :].view(batch_size, num_patches, num_patches, C)
         return tokens
 
 def get_mask(mask, modality):
