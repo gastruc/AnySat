@@ -17,7 +17,7 @@ Official implementation for
 <br>
 
 <p align="center">
-  <img src=".media/image.png" alt="AnySat Architecture">
+  <img src=".media/image.png" alt="AnySat Architecture" width="600">
 </p>
 
 
@@ -28,7 +28,7 @@ Official implementation for
 We train a single AnySat model on **GeoPlex**, a collection of 5 multimodal datasets spanning 11 sensors with varying characteristics. In fine-tuning or linear probing, AnySat achieves SOTA or near-SOTA performance for land cover segmentation, crop type classification, change detection, tree species identification, and flood mapping.
 
 <p align="center">
-  <img src=".media/teaser.png" alt="AnySat Teaser" width="800">
+  <img src=".media/teaser.png" alt="AnySat Teaser" width="600">
 </p>
 
 # Key Features
