@@ -93,7 +93,7 @@ Decide on:
   - `'tile'`: Single vector per tile
   - `'patch'`: A vector per patch
   - `'dense'`: A vector per sub-patch
-  - `'all'`: a tuple with all three outputs
+  - `'all'`: A vector per patch with class token at first position
  
 The sub patches are `1x1` pixels for time series and `10x10` pixels for VHR images. If using `output='dense'`, specify the `output_modality`.
 
