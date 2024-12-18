@@ -192,7 +192,6 @@ spatial_encoder:
   drop_path_rate: 0.0
   modalities: ${modalities}
   scale: ${model.network.encoder.scale}
-  flash_attn: True
   input_res:
     aerial: ${eval:'${model.network.encoder.projectors.aerial.patch_size} * 0.2'}
     aerial-flair: ${eval:'${model.network.encoder.projectors.aerial-flair.patch_size} * 0.2'}

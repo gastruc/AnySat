@@ -10,7 +10,7 @@ height: 1
 width: 1
 num_patches: 1
 norm_path: ${data_dir}
-temporal_dropout: 0.2
+temporal_dropout: 0.3
 
 train_dataset:
   _partial_: true

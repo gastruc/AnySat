@@ -1,11 +1,11 @@
 # @package _global_
 
 defaults:
-  - override /dataset: MultiPlanted
+  - override /dataset: MultiPastis
   - override /model: JEPA_multi
-  - override /model/network: JEPAOmni_multi
+  - override /model/network: JEPAAny_multi
   - override /model/network/encoder: Any_Base_multi
-  - override /model/loss: OmniSAT_JEPA
+  - override /model/loss: AnySat_JEPA
 
 datamodule:
   _target_: data.datamodule.DataModuleMulti
@@ -19,9 +19,7 @@ callbacks:
     patience: 200
 
 modalities_dict:
-  planted:
+  pastishd:
+    - "spot"
     - "s2"
     - "s1"
-    - "l7"
-    - "alos"
-    - "modis"

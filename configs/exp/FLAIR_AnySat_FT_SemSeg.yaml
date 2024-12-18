@@ -11,9 +11,10 @@ dataset:
   classif: False
 
 model:
-  name: "AnySat_FineTuning_MM"
+  name: "AnySat_FineTuning"
   optimizer:
     lr: 5e-5
+    weight_decay: 1e-2
   network:
     encoder:
       scale: 1
@@ -21,7 +22,7 @@ model:
       modality_keep: "aerial-flair"
     instance:
       name: "target_encoder"
-      path: ${paths.log_dir}/FLAIR_AnySAT/checkpoints/last.ckpt
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:

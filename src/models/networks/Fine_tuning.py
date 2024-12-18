@@ -107,7 +107,6 @@ class Fine(nn.Module):
                 layers.append(nn.ReLU())
                 for i in range(len(inter_dim) - 1):
                     layers.append(nn.Linear(inter_dim[i], inter_dim[i + 1]))
-                    #layers.append(nn.BatchNorm1d(inter_dim[i + 1]))
                     layers.append(nn.Dropout(p = p_drop))
                     layers.append(nn.ReLU())
                 layers.append(nn.Linear(inter_dim[-1], n_class))
@@ -120,17 +119,6 @@ class Fine(nn.Module):
         Forward pass of the network. Perform pooling of tokens after transformer 
         according to global_pool argument.
         """
-        # x = self.head(x['embeddings'].squeeze(1))
-        # B, N, _, D = x.shape
-        # num_patches = int(N**(1/2))
-        # size = num_patches * self.patch_size
-
-        # x = x.unsqueeze(2).permute(0, 2, 4, 1, 3)
-        # x = x.view(B, 1, self.n_class, N, self.patch_size, self.patch_size)
-        # x = x.view(B, 1, self.n_class, num_patches, num_patches, self.patch_size, self.patch_size).permute(0, 1, 2, 3, 5, 4, 6)
-        # x = x.reshape(B, 1, self.n_class, size, size).flatten(0, 1)
-        # return x
-        name = x['name'][0]
         x = self.model(x)
         if self.global_pool:
             if self.global_pool == 'avg':
@@ -147,7 +135,6 @@ class Fine(nn.Module):
                 f, out = x
                 x = f[:, 1:].unsqueeze(2).repeat(1, 1, out['subpatches'].shape[2], 1)
                 dense_x = torch.cat([x, out['subpatches']], dim = 3)
-                # torch.save(dense_x, f'/home/GAstruc/PhD/PhD/data/BioMassters/embeddings/dense_x_{name}.pt')
                 x = self.head(dense_x)
                 B, N, _, D = x.shape
                 num_patches = int(N**(1/2))

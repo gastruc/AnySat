@@ -2,28 +2,26 @@
 
 defaults:
   - override /dataset: Pastis
+  - override /model/network: Fine_tuning
   - override /model/network/encoder: Any_Base
-  - override /model: SemSeg
-  - override /model/network: Fine_tuning_SemSeg
-  #- override /model/test_metrics: metrics_SemSeg_visu
 
 dataset:
-  classif: False
+  num_classes: 18
 
 model:
-  name: "AnySat_FineTuning_MM_SemSeg"
+  name: "AnySat_FineTuning"
   optimizer:
     lr: 5e-5
   network:
     encoder:
-      scale: 4
+      scale: 4 
     instance:
       name: "target_encoder"
-      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:
-    monitor: "val/mIoU"
+    monitor: "val/F1_Score_macro"
     mode: "max"
     patience: 10
 

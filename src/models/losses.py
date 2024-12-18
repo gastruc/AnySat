@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class CrossEntropyWeighted(nn.Module):
     def __init__(self, num_classes):
-        super(CrossEntropy, self).__init__()
+        super(CrossEntropyWeighted, self).__init__()
         self.weights = torch.ones(num_classes).float()
         self.weights[-1] = 0
 
@@ -31,7 +31,10 @@ class CrossEntropyIgnore(nn.Module):
         Returns:
             torch.Tensor: CrossEntropy loss between x and y: torch.Tensor([B]) while ignoring -1 index
         """
-        return {"cross_entropy_loss": nn.functional.cross_entropy(x.flatten(2, 3), y["label"].flatten(1, 2).long(), ignore_index=-1)}
+        if len(y["label"].shape) > 1:
+            x = x.flatten(2, 3)
+            y["label"] = y["label"].flatten(1, 2)
+        return {"cross_entropy_loss": nn.functional.cross_entropy(x, y["label"].long(), ignore_index=-1)}
 
 class CrossEntropy(nn.Module):
     def __init__(self):
@@ -204,7 +207,7 @@ class Losses(nn.Module):
             try:
                 if m in ["mil-nce", "mse_patch"]:
                     self.loss[m] = (LOSSES[m](modalities), v)
-                elif m in ["plantedce"]:
+                elif m in ["crossentropyweighted"]:
                     self.loss[m] = (LOSSES[m](num_classes), v)
                 else:
                     self.loss[m] = (LOSSES[m](), v)

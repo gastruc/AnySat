@@ -5,17 +5,17 @@ defaults:
   - override /model/network/encoder: Any_Base
 
 model:
-  name: "AnySat_FineTuning_MM"
+  name: "AnySat_FineTuning"
   optimizer:
     lr: 5e-5
   network:
     instance:
       name: 'target_encoder'
-      path: ${paths.log_dir}/TreeSat_OmniSAT/checkpoints/last.ckpt
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:
-    monitor: "val/F1_Score_macro"
+    monitor: "val/F1_Score_weighted"
     mode: "max"
     patience: 10
 

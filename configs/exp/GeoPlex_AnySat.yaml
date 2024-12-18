@@ -3,23 +3,51 @@
 defaults:
   - override /dataset: GeoPlex
   - override /model: JEPA_multi
-  - override /model/network: JEPAOmni_multi
-  - override /model/network/encoder: Any_multi
-  - override /model/loss: OmniSAT_JEPA
+  - override /model/network: JEPAAny_multi
+  - override /model/network/encoder: Any_Base_multi
+  - override /model/loss: AnySat_JEPA
 
 datamodule:
   _target_: data.datamodule.DataModuleMulti
+  stop_iteration_train: ${dataset.iter}
+  stop_iteration_val: ${dataset.iter_val}
+  weights_datasets:
+    planted: 2
+    pastishd: 1
+    flair: 1
+    tsaits: 1
+    s2naip: 4
+
 model:
   name: "AnySat"
   optimizer:
-    lr: 1e-4
+    lr: 5e-5
+
+callbacks:
+  early_stopping:
+    monitor: "train/loss"
+    patience: 200
 
 modalities_dict:
+  flair:
+    - "aerial-flair"
+    - "s2"
+  pastishd:
+    - "spot"
+    - "s2"
+    - "s1"
+  planted:
+    - "s2"
+    - "s1"
+    - "l7"
+    - "alos"
+    - "modis"
   tsaits:
     - "aerial"
     - "s2"
     - "s1-asc"
-  pastishd:
-    - "spot"
+  s2naip:
+    - "naip"
+    - "l8"
     - "s2"
     - "s1"

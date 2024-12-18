@@ -1,18 +1,18 @@
 # @package _global_
 
 defaults:
-  - override /dataset: MultiTSAITS
+  - override /dataset: MultiFLAIR
   - override /model: JEPA_multi
-  - override /model/network: JEPAOmni_multi
+  - override /model/network: JEPAAny_multi
   - override /model/network/encoder: Any_Base_multi
-  - override /model/loss: OmniSAT_JEPA
+  - override /model/loss: AnySAT_JEPA
 
 datamodule:
   _target_: data.datamodule.DataModuleMulti
 
 dataset:
-  global_batch_size:
-    tsaits: 64
+  global_batch_size: 
+    flair: 16
 
 model:
   name: "AnySat"
@@ -24,7 +24,6 @@ callbacks:
     patience: 200
 
 modalities_dict:
-  tsaits:
-    - "aerial"
+  flair:
+    - "aerial-flair"
     - "s2"
-    - "s1-asc"

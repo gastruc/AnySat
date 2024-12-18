@@ -2,13 +2,13 @@
 
 defaults:
   - override /dataset: Planted
-  - override /model: Classif
+  - override /model: Classif_reduce
   - override /model/network: Fine_tuning
   - override /model/network/encoder: Any_Base
   - override /model/loss: CrossEntropy
 
 model:
-  name: "AnySat_FineTuning_MM"
+  name: "AnySat_FineTuning"
   train_metrics:
     multilabel: False
   val_metrics:
@@ -17,10 +17,13 @@ model:
     multilabel: False
   optimizer:
     lr: 5e-5
+    weight_decay: 1e-4
   network:
+    encoder:
+      scale: 3
     instance:
       name: "target_encoder"
-      path: ${paths.log_dir}/Planted_OmniSAT/checkpoints/last.ckpt
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:

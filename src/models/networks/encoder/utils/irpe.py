@@ -4,9 +4,13 @@ import torch
 import torch.nn as nn
 from models.networks.encoder.utils.utils import trunc_normal_
 try:
-    from models.networks.encoder.utils.rpe_ops.rpe_index import RPEIndexFunction
+    from rpe_ops.rpe_index import RPEIndexFunction
 except ImportError:
     RPEIndexFunction = None
+    import warnings
+    RED_STR = "\033[91m{}\033[00m"
+    warnings.warn(RED_STR.format(""),)
+
 
 @torch.no_grad()
 def piecewise_index(relative_position, alpha, beta, gamma, dtype):

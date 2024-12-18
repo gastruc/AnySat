@@ -6,26 +6,26 @@ defaults:
   - override /model: SemSeg
   - override /model/network: Fine_tuning_SemSeg
   - override /model/loss: CrossEntropyIgnore
-  - override /model/train_metrics: metrics_segsem
-  - override /model/val_metrics: metrics_segsem
-  - override /model/test_metrics: metrics_segsem
+  - override /model/train_metrics: metrics_segsemJ
+  - override /model/val_metrics: metrics_segsemJ
+  - override /model/test_metrics: metrics_segsemJ
 
 dataset:
   classif: False
 
 model:
-  name: "AnySat_FineTuning_MM_SemSeg"
+  name: "AnySat_LinearProbing_SemSeg"
   optimizer:
-    lr: 5e-5
+    lr: 2e-4
   network:
     encoder:
-      scale: 1
+      scale: 4
       keep_subpatch: True
       modality_keep: "s1"
     instance:
       freeze: True
       name: "target_encoder"
-      path: ${paths.root_dir}/.models/AnySat_Base.pth
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:

@@ -5,22 +5,27 @@ defaults:
   - override /model/network/encoder: Any_Base
   - override /model: SemSeg
   - override /model/network: Fine_tuning_SemSeg
-  - override /model/loss: crossentropy_full
+  - override /model/loss: CrossEntropy
   - override /model/train_metrics: metrics_seg_pangaea
   - override /model/val_metrics: metrics_seg_pangaea
   - override /model/test_metrics: metrics_seg_pangaea
 
+dataset:
+  global_batch_size: 4
+
+max_epochs: 200
+
 model:
-  name: "AnySat_FineTuning_MM_SemSeg"
+  name: "AnySat_LinearProbing_SemSeg"
   optimizer:
     lr: 5e-5
   network:
     encoder:
-      scale: 1
+      scale: 8
     instance:
       freeze: True
       name: "target_encoder"
-      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:

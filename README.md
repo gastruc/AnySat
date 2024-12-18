@@ -124,11 +124,11 @@ features = AnySat(data, scale=scale)
 
 ```bash
 # clone project
-git clone https://github.com/gastruc/anysat
-cd anysat
+git clone https://github.com/gastruc/AnySat
+cd AnySat
 
 # [OPTIONAL] create conda environment
-conda create -n anysat python=3.9
+conda create -n anysat python=3.9 pytorch=2.2.0 cudatoolkit=11.8 -c pytorch -c conda-forge
 conda activate anysat
 
 # install requirements
@@ -140,9 +140,11 @@ mkdir data
 mkdir logs
 ```
 
+You can download the pretrained models [here](https://huggingface.co/gastruc/anysat/tree/main) and put it in the .models folder. The 2 different models depend on the usage.
+
 # Usage
 
-To load the model locally, you can use the following code:
+To load the model locally to extract features, you can use the following code:
 ```python
 
 from hubconf import AnySat

@@ -2,7 +2,6 @@ import torch
 from torch import nn
 
 import torch.nn.functional as F
-from models.networks.encoder.utils.utils_ViT import CrossInterBlock
 
 class MLP(nn.Module):
     def __init__(

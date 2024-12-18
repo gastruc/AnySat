@@ -16,7 +16,7 @@ model:
 
 callbacks:
   early_stopping:
-    monitor: "val/F1_Score_macro"
+    monitor: "val/F1_Score_weighted"
     mode: "max"
     patience: 10
 

@@ -14,7 +14,6 @@ instance:
     mlp_ratio: 4.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.0
-    init_st: 0.02
     scales: ${dataset.scales}
   ratio: 0.5
   

@@ -4,7 +4,7 @@ defaults:
   - _self_
 
 name: BraDD
-global_batch_size: 2048
+global_batch_size: 8
 num_classes: 2
 height: 48
 width: 48

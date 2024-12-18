@@ -12,9 +12,10 @@ defaults:
 
 dataset:
   classif: False
+  global_batch_size: 12
 
 model:
-  name: "AnySat_FineTuning_MM_SemSeg"
+  name: "AnySat_LinearProbing_SemSeg"
   optimizer:
     lr: 5e-5
   network:
@@ -25,7 +26,7 @@ model:
     instance:
       freeze: True
       name: "target_encoder"
-      path: ${paths.log_dir}/PASTIS-R_OmniSAT/checkpoints/last.ckpt
+      path: ${paths.root_dir}/.models/AnySat_full.pth
 
 callbacks:
   early_stopping:

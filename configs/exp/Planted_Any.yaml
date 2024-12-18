@@ -17,6 +17,8 @@ model:
   optimizer:
     lr: 5e-5
   network:
+    encoder:
+      scale: 3
     instance:
       omni: True
     mlp:

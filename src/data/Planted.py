@@ -74,8 +74,6 @@ class Planted(Dataset):
         if self.split == "train" and self.density_sampling:
             label_density = self.labels.sum(axis=0) / len(self.labels)
             self.class_weights = np.sqrt(label_density)
-            #self.class_weights = label_density ** (1/4)
-            #self.class_weights = np.ones(len(classes))
         
             self.class_indices = {
                 c: np.where(np.array(list(self.data.values())) == c)[0] 
@@ -139,13 +137,13 @@ class Planted(Dataset):
             i = np.random.choice(self.class_indices[class_idx])
 
         id = self.ids[i]
-        output = {'label': torch.from_numpy(self.labels[i])}
+        output = {'label': torch.from_numpy(self.labels[i]).float()}
 
         for modality in self.modalities:
             output[modality] = torch.tensor(np.load(os.path.join(self.data_path, id, '_'.join([id, modality]) + ".npz")
                                                                             , allow_pickle=True)['arr_0']).permute(0, 3, 1, 2)
             if modality == "alos" or modality == "s1":
-                ratio_band = output[modality][:, :1, :, :] / (output[modality][:, 1:, :, :] + 1e-10)
+                ratio_band = output[modality][:, :1, :, :] / (output[modality][:, 1:2, :, :] + 1e-10)
                 ratio_band = torch.clamp(ratio_band, max=1e4, min=-1e4)
                 output[modality] = torch.cat((output[modality][:, :2, :, :], ratio_band), dim=1)
             output['_'.join([modality, "mask"])] = torch.tensor(np.load(os.path.join(self.data_path, id, 

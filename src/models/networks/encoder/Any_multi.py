@@ -259,3 +259,12 @@ class AnyModule(nn.Module):
             return tokens[:, 1:, :]
         return tokens
 
+def get_mask(mask, modality):
+    if modality in ['alos', 'l7']:
+        return torch.max(mask.flatten(1, 2), dim=1).values.flatten(1, 2)
+    else:
+        scale = 3
+        mask = mask.flatten(1, 2).unfold(2, scale, scale).unfold(3, scale, scale)
+        mask = mask.flatten(2, 3).flatten(3, 4)
+        mask = mask.permute(0, 2, 1, 3).flatten(2, 3)
+    return torch.max(mask, dim=2).values

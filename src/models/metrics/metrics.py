@@ -305,7 +305,7 @@ class MetricsSemSegJ(Metric):
 
     def update(self, pred, gt):
         self.miou(pred.flatten(2, 3).permute(0, 2 ,1).flatten(0, 1).argmax(dim=1), 
-                  gt['label'].flatten(1, 2).flatten(0, 1).long())
+                  gt['label'].flatten(0, 1).long())
         if self.save_results:
             for i, name in enumerate(gt['name']):
                 np.save(self.save_dir + str(name) + '.npy', pred.cpu()[i].numpy())
@@ -505,6 +505,7 @@ class IoU(Metric):
 
         """
         target = tg['label']
+        print(predicted.shape, target.shape)
         # Dimensions check
         assert predicted.size(0) == target.size(0), \
             'number of targets and predicted outputs do not match'

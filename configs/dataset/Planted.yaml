@@ -4,7 +4,7 @@ defaults:
   - _self_
 
 name: Planted
-global_batch_size: 256
+global_batch_size: 64
 num_classes: 40
 height: 12
 width: 12

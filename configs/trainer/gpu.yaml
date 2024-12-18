@@ -6,4 +6,4 @@ trainer:
   devices: ${trainer.devices}
   sync_batchnorm: True
 
-devices: 3
+devices: 1
