@@ -13,7 +13,7 @@
 Official implementation for
 <br>
 <br>
-[_AnySat: An Earth Observation Model for Any Resolutions, Scales, and Modalities_](https://arxiv.org)
+[_AnySat: An Earth Observation Model for Any Resolutions, Scales, and Modalities_](https://arxiv.org/abs/2412.14123)
 <br>
 
 <p align="center">
@@ -223,7 +223,7 @@ Please use the following bibtex:
 @article{astruc2024anysat,
   title={{AnySat: An Earth} Observation Model for Any Resolutions, Scales, and Modalities},
   author={Astruc, Guillaume and Gonthier, Nicolas and Mallet, Clement and Landrieu, Loic},
-  journal={arXiv preprint arXiv:2412.XXXX},
+  journal={arXiv preprint arXiv:2412.14123},
   year={2024}
 }
 ```

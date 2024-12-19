@@ -140,7 +140,6 @@ dmypy.json
 .idea/
 
 # Data & Models
-*.h5
 *.tar
 *.tar.gz
 

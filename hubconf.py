@@ -7,6 +7,7 @@ import sys
 import torch
 import torch.nn as nn
 from pathlib import Path
+import warnings
 
 REPO_ROOT = Path(__file__).parent
 if str(REPO_ROOT / "src") not in sys.path:
@@ -54,13 +55,13 @@ class AnySat(nn.Module):
                 
         del self.config['projectors']
             
-        from src.models.networks.encoder.Transformer import TransformerMulti
-        self.spatial_encoder = TransformerMulti(**self.config['spatial_encoder'])
-        del self.config['spatial_encoder']
-        from src.models.networks.encoder.Any_multi import AnyModule  # Import your actual model class
         with warnings.catch_warnings():
             # Ignore all warnings during model initialization
             warnings.filterwarnings('ignore')
+            from src.models.networks.encoder.Transformer import TransformerMulti
+            self.spatial_encoder = TransformerMulti(**self.config['spatial_encoder'])
+            del self.config['spatial_encoder']
+            from src.models.networks.encoder.Any_multi import AnyModule  # Import your actual model class
             self.model = AnyModule(projectors=projectors, spatial_encoder=self.spatial_encoder, **self.config)
         
         if device is not None:
