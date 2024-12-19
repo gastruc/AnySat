@@ -27,6 +27,19 @@ class AnySat(nn.Module):
     
     def __init__(self, model_size='base', flash_attn=True, **kwargs):
         super().__init__()
+        self.res = {
+                'aerial': 0.2,
+                'aerial-flair': 0.2,
+                'spot': 1.0,
+                'naip': 1.25,
+                's2': 10,
+                's1-asc': 10,
+                's1-des': 10,
+                's1': 10,
+                'l8': 10,
+                'l7': 30,
+                'alos': 30,
+                }
         self.config = get_default_config(model_size)
         
         self.config['flash_attn'] = flash_attn
@@ -92,6 +105,27 @@ class AnySat(nn.Module):
     
     def forward(self, x, patch_size, output='patch', **kwargs):
         assert output in ['patch', 'tile', 'dense', 'all'], "Output must be one of 'patch', 'tile', 'dense', 'all'"
+        sizes = {}
+        for modality in list(x.keys()):
+            if modality.endswith('_dates'):
+                continue
+            shape = x[modality].shape
+            assert shape[-2] == shape[-1], "Images must be squared"
+            if modality in ['s2', 's1-asc', 's1', 'alos', 'l7', 'l8', 'modis']:
+                assert len(shape) == 5, f"{modality} Images must be 5D: Batch, Time, Channels, Height, Width"
+            else:
+                assert len(shape) == 4, f"{modality} Images must be 4D: Batch, Channels, Height, Width"
+                
+            if modality != 'modis':
+                sizes[modality] = shape[-1] * self.res[modality]
+        
+        if len(sizes) >= 2:
+            size_values = list(sizes.values())
+            for i in range(len(size_values) - 1):
+                if abs(size_values[i] - size_values[i + 1]) > 1e-10:  # Using small epsilon for float comparison
+                    mod1, mod2 = list(sizes.keys())[i], list(sizes.keys())[i + 1]
+                    raise ValueError(f"Modalities {mod1} and {mod2} have incompatible sizes: {size_values[i]} vs {size_values[i + 1]}")
+                
         return self.model.forward_release(x, patch_size // 10, output=output, **kwargs)
 
 # Hub entry points
