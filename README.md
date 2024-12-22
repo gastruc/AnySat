@@ -40,7 +40,7 @@ We train a single AnySat model on **GeoPlex**, a collection of 5 multimodal data
 
 # 🚀  Quickstart
 
-Check out our [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/gastruc/anysat) for more details.
+Check out our [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/g-astruc/AnySat) for more details.
 
 ## Install and load Anysat
 
