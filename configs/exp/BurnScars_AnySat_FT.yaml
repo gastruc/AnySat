@@ -16,7 +16,7 @@ dataset:
   global_batch_size: 4
 
 model:
-  name: "AnySat_FineTuning_MM_SemSeg"
+  name: "AnySat_FT_SemSeg"
   optimizer:
     lr: 5e-5
   network:
