@@ -1,27 +1,21 @@
 # @package _global_
 
 defaults:
-  - override /dataset: Sen1floods11
+  - override /dataset: Pastis
   - override /model/network/encoder: Any_Base
   - override /model: SemSeg
   - override /model/network: Fine_tuning_SemSeg
-  - override /model/loss: CrossEntropyIgnore
-  - override /model/train_metrics: metrics_seg_pangaea
-  - override /model/val_metrics: metrics_seg_pangaea
-  - override /model/test_metrics: metrics_seg_pangaea
 
 dataset:
-  global_batch_size: 4
-
-max_epochs: 200
+  classif: False
 
 model:
-  name: "AnySat_LinearProbing_SemSeg"
+  name: "AnySat_FineTuning_SemSeg"
   optimizer:
-    lr: 2e-4
+    lr: 5e-5
   network:
     encoder:
-      scale: 8
+      scale: 4
       keep_subpatch: True
       modality_keep: "s2"
     instance:
@@ -37,4 +31,3 @@ callbacks:
 
 modalities:
   - "s2"
-  - "s1"
