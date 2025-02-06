@@ -10,6 +10,7 @@ instance:
   inter_dim: []
   p_drop: 0.2
   freeze: False
+  freeze_new: False
   n_class: ${dataset.num_classes}
   modalities: ${modalities}
   last_block: False

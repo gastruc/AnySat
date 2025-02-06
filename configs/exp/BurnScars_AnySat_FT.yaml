@@ -1,0 +1,39 @@
+# @package _global_
+
+defaults:
+  - override /dataset: BurnScars
+  - override /model/network/encoder: Any_Base_up
+  - override /model: SemSeg
+  - override /model/network: Fine_tuning_SemSeg
+  - override /model/loss: CrossEntropyIgnore
+  - override /model/train_metrics: metrics_seg_pangaea
+  - override /model/val_metrics: metrics_seg_pangaea
+  - override /model/test_metrics: metrics_seg_pangaea
+
+max_epochs: 200
+
+dataset:
+  global_batch_size: 4
+
+model:
+  name: "AnySat_FineTuning_MM_SemSeg"
+  optimizer:
+    lr: 5e-5
+  network:
+    encoder:
+      scale: 24
+      keep_subpatch: True
+      modality_keep: "hls"
+    instance:
+      name: "target_encoder"
+      path: ${paths.root_dir}/.models/AnySat_full.pth
+      patch_size: ${eval:'${model.network.encoder.scale} // 3'}
+
+callbacks:
+  early_stopping:
+    monitor: "val/mIoU"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "hls"

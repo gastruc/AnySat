@@ -1,0 +1,34 @@
+# @package _global_
+
+defaults:
+  - override /dataset: SpaceNet7
+  - override /model/network/encoder: Any_Base_up
+  - override /model: SemSeg
+  - override /model/network: Fine_tuning_SemSeg
+  - override /model/loss: CrossEntropyIgnore
+  - override /model/train_metrics: metrics_seg_pangaea
+  - override /model/val_metrics: metrics_seg_pangaea
+  - override /model/test_metrics: metrics_seg_pangaea
+
+model:
+  name: "AnySat_LP+"
+  optimizer:
+    lr: 5e-5
+  network:
+    encoder:
+      scale: 4
+      keep_subpatch: True
+      modality_keep: "planet"
+    instance:
+      freeze: False
+      name: "target_encoder"
+      path: ${paths.root_dir}/.models/AnySat_full.pth
+
+callbacks:
+  early_stopping:
+    monitor: "val/mIoU"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "planet"

@@ -1,0 +1,40 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: so2sat
+global_batch_size: 128
+num_classes: 17
+height: 32
+width: 32
+num_patches: 1024
+norm_path: ${data_dir}
+
+train_dataset:
+  _partial_: true
+  _target_: data.So2Sat.So2Sat
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+val_dataset:
+  _partial_: true
+  _target_: data.So2Sat.So2Sat
+  path: ${data_dir}
+  split: val
+  transform: ${dataset.test_transform}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+
+test_dataset:
+  _partial_: true
+  _target_: data.So2Sat.So2Sat
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}

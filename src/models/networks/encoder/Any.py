@@ -107,7 +107,7 @@ class AnyModule(nn.Module):
         out = {}
         self.pos_embed = self.pos_embed.to(x[self.modalities[0]].device)
         for modality in self.modalities:
-            if modality == "aerial" or modality == "spot" or modality == "aerial-flair" or modality == "naip":
+            if modality in ["aerial", "spot", "aerial-flair", "naip", "planet"]:
                 token = getattr(self, '_'.join(['projector', modality]))(x[modality])
             elif modality.split('-')[-1] == 'mono':
                 token = getattr(
@@ -147,7 +147,7 @@ class AnyModule(nn.Module):
         out = {}
         self.pos_embed = self.pos_embed.to(x[self.modalities[0]].device)
         for modality in self.modalities:
-            if modality == "aerial" or modality == "spot" or modality == "aerial-flair" or modality == "naip":
+            if modality in ["aerial", "spot", "aerial-flair", "naip", "planet"]:
                 token = getattr(self, '_'.join(['projector', modality]))(x[modality])
             elif modality.split('-')[-1] == 'mono':
                 token = getattr(

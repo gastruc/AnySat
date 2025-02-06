@@ -1,0 +1,39 @@
+defaults:
+  - train_transform: Identity
+  - test_transform: Identity
+  - _self_
+
+name: SpaceNet7
+global_batch_size: 128
+num_classes: 2
+height: 256
+width: 256
+num_patches: 65536 #16384
+norm_path: ${data_dir}
+
+train_dataset:
+  _partial_: true
+  _target_: data.SpaceNet7.SpaceNet7
+  path: ${data_dir}
+  split: train
+  transform: ${dataset.train_transform}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+val_dataset:
+  _partial_: true
+  _target_: data.SpaceNet7.SpaceNet7
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}
+
+test_dataset:
+  _partial_: true
+  _target_: data.SpaceNet7.SpaceNet7
+  path: ${data_dir}
+  split: test
+  transform: ${dataset.test_transform}
+  modalities: ${modalities}
+  norm_path: ${dataset.norm_path}

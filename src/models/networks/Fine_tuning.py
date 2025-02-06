@@ -26,6 +26,7 @@ class Fine(nn.Module):
                  p_drop: float = 0.3,
                  name: str = 'encoder',
                  freeze: bool = True,
+                 freeze_new: bool = False,
                  n_class: int = 15,
                  pooling_method: str = 'token',
                  modalities: list = [],
@@ -37,6 +38,7 @@ class Fine(nn.Module):
 
         self.size = output_size
         self.freeze = freeze
+        self.freeze_new = freeze_new
         self.global_pool = pooling_method
         self.patch_size = patch_size
         self.keep_subpatch = encoder.keep_subpatch
@@ -69,7 +71,7 @@ class Fine(nn.Module):
                             if not(proj_only) and not('predictor' in key):
                                 d['.'.join(key.split('.')[2:])] = u["state_dict"][key]
 
-        if not(proj_only):
+        if not(proj_only) and not(freeze_new):
             encoder.load_state_dict(d)
         else:
             encoder.load_state_dict(d, strict=False)
@@ -90,6 +92,14 @@ class Fine(nn.Module):
                 else:
                     param.requires_grad = False
 
+        if freeze_new:
+            model_parameters = self.model.named_parameters()
+            for name, param in model_parameters:
+                if 'projector' in name:
+                    param.requires_grad = True
+                else:
+                    param.requires_grad = False
+        
         if self.freeze:
             for param in self.model.parameters():
                 param.requires_grad = False

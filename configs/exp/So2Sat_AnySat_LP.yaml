@@ -1,0 +1,37 @@
+# @package _global_
+
+defaults:
+  - override /dataset: So2Sat
+  - override /model/network/encoder: Any_Base
+  - override /model/network: Fine_tuning
+  - override /model/loss: CrossEntropy
+  - override /model/train_metrics: metrics_acc
+  - override /model/val_metrics: metrics_acc
+  - override /model/test_metrics: metrics_acc
+
+dataset:
+  global_batch_size: 768
+
+max_epochs: 200
+
+model:
+  name: "AnySat_LP"
+  optimizer:
+    lr: 2e-3
+  network:
+    encoder:
+      scale: 8
+    instance:
+      freeze: True
+      name: "target_encoder"
+      path: ${paths.root_dir}/.models/AnySat_full.pth
+
+callbacks:
+  early_stopping:
+    monitor: "val/OA"
+    mode: "max"
+    patience: 10
+
+modalities:
+  - "s2"
+  - "s1"
