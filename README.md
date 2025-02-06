@@ -40,7 +40,7 @@ We train a single AnySat model on **GeoPlex**, a collection of 5 multimodal data
 
 # 🚀  Quickstart
 
-Check out our [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/gastruc/anysat) for more details.
+Check out our [demo notebook](demo.ipynb) or [huggingface page](https://huggingface.co/g-astruc/AnySat) for more details.
 
 ## Install and load Anysat
 
@@ -71,7 +71,7 @@ Arrange your data in a dictionary with any of the following keys:
 | l8            | Time series tensor |BxTx11xHxW                                           | B8, B1, B2, B3, B4, B5, B6, B7, B9, B10, B11 | 10m     |
 | modis         | Time series tensor |BxTx7xHxW                                            | B1, B2, B3, B4, B5, B6, B7                | 250m       |
    
-Note that time series requires a `_dates` companion tensor containing the day of the year: 01/01 = 0, 31/12=364.
+Note that time series requires a `_dates` companion tensor containing the day of the year: 01/01 = 0, 31/12=364. The data also needs to be normalized (data -mean) /std as input to our model.
 
 **Example Input** for a tile of 60x60m and a batch size of B:
 
