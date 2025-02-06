@@ -11,11 +11,9 @@ def get_2d_sincos_pos_embed_with_resolution(
     """
     pos_embed_final = {}
     for modality in modalities:
-        # if res[modality] < 10:
-        #     grid_size_aug = grid_size * max(1, int(1 / res[modality]))
-        # else:
-        #     grid_size_aug = max(1, int(grid_size * 10 / res[modality]))
         grid_size_aug = max(1, int(grid_size * 10 / res[modality]))
+        if modality in ["planet"]:
+            grid_size_aug = grid_size
         grid_h = torch.arange(grid_size_aug, dtype=torch.float32)
         grid_w = torch.arange(grid_size_aug, dtype=torch.float32)
         grid = torch.meshgrid(

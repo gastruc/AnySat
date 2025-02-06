@@ -10,6 +10,11 @@ defaults:
   - override /model/val_metrics: metrics_seg_pangaea
   - override /model/test_metrics: metrics_seg_pangaea
 
+max_epochs: 200
+
+dataset:
+  global_batch_size: 8
+
 model:
   name: "AnySat_LP+"
   optimizer:
@@ -20,6 +25,7 @@ model:
       keep_subpatch: True
       modality_keep: "planet"
     instance:
+      proj_size: 4
       freeze: False
       freeze_new: True
       name: "target_encoder"

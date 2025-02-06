@@ -33,8 +33,8 @@ class PatchMLP(nn.Module):
 
     def forward(self, x):
         x = self.patch_embed(x)
-        grid_size = (self.res // self.patch_size, self.res // self.patch_size)
-        x = x.unfold(2, grid_size[0], grid_size[0]).unfold(3, grid_size[1], grid_size[1])
+        grid_size = max(self.res // self.patch_size, 1)
+        x = x.unfold(2, grid_size, grid_size).unfold(3, grid_size, grid_size)
         x = x.flatten(4, 5)
         x = x.unfold(2, self.scale, self.scale).unfold(3, self.scale, self.scale)
         x = x.flatten(2, 3).permute(0, 1, 2, 4, 5, 3).flatten(3, 5)

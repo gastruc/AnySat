@@ -33,6 +33,7 @@ class Fine(nn.Module):
                  last_block: bool = False,
                  proj_only: bool = False,
                  patch_size: int = 1,
+                 proj_size: int = 1,
                 ):
         super().__init__()
 
@@ -71,7 +72,7 @@ class Fine(nn.Module):
                             if not(proj_only) and not('predictor' in key):
                                 d['.'.join(key.split('.')[2:])] = u["state_dict"][key]
 
-        if not(proj_only) and not(freeze_new):
+        if not(proj_only) and not(freeze_new) and proj_size == 1:
             encoder.load_state_dict(d)
         else:
             encoder.load_state_dict(d, strict=False)
@@ -105,6 +106,7 @@ class Fine(nn.Module):
                 param.requires_grad = False
                 
         self.n_class = n_class
+        self.proj_size = proj_size
         # set n_class to 0 if we want headless model
         if not(self.global_pool) and not(self.keep_subpatch):
             n_class = n_class * patch_size * patch_size
@@ -117,11 +119,12 @@ class Fine(nn.Module):
                 layers.append(nn.ReLU())
                 for i in range(len(inter_dim) - 1):
                     layers.append(nn.Linear(inter_dim[i], inter_dim[i + 1]))
+                    #layers.append(nn.BatchNorm1d(inter_dim[i + 1]))
                     layers.append(nn.Dropout(p = p_drop))
                     layers.append(nn.ReLU())
-                layers.append(nn.Linear(inter_dim[-1], n_class))
+                layers.append(nn.Linear(inter_dim[-1], n_class * proj_size * proj_size))
             else:
-                layers.append(nn.Linear(self.size, n_class))
+                layers.append(nn.Linear(self.size, n_class * proj_size * proj_size))
             self.head = nn.Sequential(*layers)
         
     def forward(self,x):
@@ -142,6 +145,23 @@ class Fine(nn.Module):
             return x
         if self.n_class:
             if self.keep_subpatch:
+                if self.proj_size > 1:
+                    f, out = x
+                    x = f[:, 1:].unsqueeze(2).repeat(1, 1, out['subpatches'].shape[2], 1)
+                    dense_x = torch.cat([x, out['subpatches']], dim = 3)
+                    x = self.head(dense_x)
+                    B, N, _, D = x.shape
+                    num_patches = int(N**(1/2))
+                    size = num_patches * self.patch_size * self.proj_size
+
+                    x = x.unsqueeze(2).permute(0, 2, 4, 1, 3)
+                    x = x.view(B, 1, D, N, self.patch_size, self.patch_size)
+                    x = x.view(B, 1, self.proj_size, self.proj_size, self.n_class, N, self.patch_size, self.patch_size).permute(0, 1, 4, 5, 6, 2, 7, 3)
+                    x = x.reshape(B, 1, self.n_class, N, self.proj_size * self.patch_size, self.patch_size * self.proj_size)
+                    x = x.view(B, 1, self.n_class, num_patches, num_patches, self.patch_size * self.proj_size, self.patch_size * self.proj_size)
+                    x = x.permute(0, 1, 2, 3, 5, 4, 6).reshape(B, 1, self.n_class, size, size).flatten(0, 1)
+                    return x
+                
                 f, out = x
                 x = f[:, 1:].unsqueeze(2).repeat(1, 1, out['subpatches'].shape[2], 1)
                 dense_x = torch.cat([x, out['subpatches']], dim = 3)
