@@ -1,4 +1,4 @@
-# AnySat: An Earth Observation Model for Any Resolutions, Scales, and Modalities
+# AnySat: One Earth Observation Model for Many Resolutions, Scales, and Modalities (CVPR 2025 Highlight)
 
 [![python](https://img.shields.io/badge/-Python_3.8+-blue?logo=python&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![pytorch](https://img.shields.io/badge/PyTorch_2.2+-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
