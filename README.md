@@ -13,7 +13,7 @@
 Official implementation for
 <br>
 <br>
-[_AnySat: An Earth Observation Model for Any Resolutions, Scales, and Modalities_](https://arxiv.org/abs/2412.14123)
+[_AnySat: One Earth Observation Model for Many Resolutions, Scales, and Modalities_](https://arxiv.org/abs/2412.14123)
 <br>
 
 <p align="center">
